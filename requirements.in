@@ -1,5 +1,5 @@
 # Dependencias principais do AutoLab
-Django>=5.1,<5.2
+Django>=5.2,<5.3
 python-decouple>=3.8,<4.0
 
 # Ferramentas de desenvolvimento e testes

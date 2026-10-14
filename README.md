@@ -8,11 +8,20 @@ O AutoLab permite que os participantes aprendam conceitos de automação, execut
 
 ## 🛠️ Stack Tecnológica
 
-- **Backend:** Python 3.12+ e Django 5.1 (Arquitetura Monolítica MVT)
+- **Backend:** Python 3.12+ e Django 5.2 LTS (Arquitetura Monolítica MVT)
 - **Frontend:** Django Templates, Bootstrap 5.3 e CSS customizado acessível
 - **Banco de Dados:** SQLite (desenvolvimento e testes) / PostgreSQL (produção)
 - **Ambiente de Exercícios:** GitHub Codespaces (com `.devcontainer`)
 - **Testes:** Pytest e Django TestCase
+
+As versões exatas estão fixadas em `requirements.txt`; Django 5.2.18 foi
+validado com Python 3.12.3. Para regenerar o arquivo ao atualizar Django:
+
+```bash
+uv pip compile requirements.in -o requirements.txt --upgrade-package django
+```
+
+Após atualizar as dependências, execute as verificações e os testes abaixo.
 
 ---
 

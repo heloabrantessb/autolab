@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 14/10/2026  
-**Status:** implementação incremental em andamento: base Django e layout integrados na `dev` local; dashboard implementado e testado na branch `feat/dashboard-inicial`, aguardando revisão e integração. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django e layout integrados na `dev` local; dashboard e atualização para Django 5.2 LTS implementados e testados em branches dependentes, aguardando envio, revisão e integração. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Revisar e integrar o dashboard inicial. A próxima entrega planejada é `feat/atualizacao-django-lts`, criada a partir de `dev` atualizada após a integração do dashboard: alinhar dependências ao Django 5.2 LTS, validar compatibilidade e atualizar o README. Depois, preparar CI, catálogo completo e o primeiro fluxo de Arquivos: **upload ZIP → organização segura → relatório → download**. Cada entrega exige escopo próprio e integração autorizada.
+Concluir a autenticação GitHub para enviar e revisar as branches pendentes. A atualização LTS foi desenvolvida em `feat/atualizacao-django-lts`, baseada excepcionalmente em `feat/dashboard-inicial`, enquanto a integração do dashboard aguarda envio. A próxima entrega é `feat/qualidade-repositorio`: CI para verificações e testes, além do modelo obrigatório de PR. Depois, preparar catálogo completo e o primeiro fluxo de Arquivos: **upload ZIP → organização segura → relatório → download**. Cada entrega exige escopo próprio e integração autorizada.
 
 ---
 
@@ -540,7 +540,7 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 14/10/2026 | Implementado | Base Django e layout Bootstrap 5.3.3 integrados na `dev` local; settings por ambiente, rotas com namespace, navegacao responsiva e mensagens |
 | 14/10/2026 | Implementado na feature | Dashboard inicial com apresentacao, fluxo em tres passos e destaques MVP; todos os laboratorios marcados como em breve; aguardando revisao e integracao |
 | 14/10/2026 | Escopo | Catalogo, Arquivos e Exercicios possuem apenas paginas provisorias com layout para sustentar a navegacao; nao representam funcionalidades completas |
-| 14/10/2026 | Pendencia tecnica | Django instalado e fixado em 5.1.15; alinhar a serie 5.2 LTS em entrega separada, sem expandir o dashboard |
+| 14/10/2026 | Implementado na feature | Django atualizado de 5.1.15 para 5.2.18 em `feat/atualizacao-django-lts`; dependencias restantes preservadas; README alinhado |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
 ### Evidencias da entrega do dashboard
@@ -557,6 +557,7 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 
 ### Changelog
 
+- **14/10/2026 — Django LTS:** dependência direta alterada para `>=5.2,<5.3`, lock regenerado, ambiente sincronizado e compatibilidade validada pelos testes existentes. Sem alterações funcionais, de settings ou de modelos.
 - **14/10/2026 — dashboard:** progresso alinhado ao repositorio; home implementada e testada na feature, disponibilidade corrigida e paginas provisorias de navegacao preservadas. Contratos funcionais do MVP mantidos.
 - **v2.0:** contrato de implementação detalhado, UX, rotas, algoritmos, defaults operacionais, serviços, segurança, testes, critérios de aceite, tarefas e decisões confirmadas vs. propostas.
 - **v1.0:** planejamento geral, módulos, arquitetura Django e primeiro laboratório.
@@ -569,6 +570,7 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 - [x] Repositório Django criado.
 - [x] Layout e navegação implementados na `dev` local.
 - [x] Dashboard inicial implementado e testado na `feat/dashboard-inicial` (integracao pendente).
+- [x] Django 5.2.18 instalado e validado na `feat/atualizacao-django-lts` (envio e integracao pendentes).
 - [ ] Catalogo completo de laboratorios implementado.
 - [ ] Laboratório de Arquivos implementado e testado.
 - [ ] Laboratório de Planilhas implementado e testado.
@@ -578,3 +580,18 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 - [ ] Publicação em ambiente online.
 
 **Instrução para a próxima IA:** comece pelo item 1 da seção 28. Antes de modificar escopo, confira as decisões confirmadas na seção 15. Atualize esta documentação após cada etapa.
+
+### Evidencias e dependencias da atualizacao LTS
+
+- Branch: `feat/atualizacao-django-lts`; origem excepcional: `feat/dashboard-inicial`, commit `75494ff`. Essa dependência segue o fluxo de branches encadeadas da política de versionamento.
+- `git pull --ff-only origin dev` executado: Already up to date. A `dev` local continua cinco commits à frente do remoto; nenhum push direto em `dev` foi feito.
+- O push do dashboard foi tentado, mas falhou por ausência de credenciais HTTPS do GitHub. Não confundir commits locais com envio concluído.
+- `uv pip compile requirements.in -o requirements.txt --upgrade-package django --cache-dir /tmp/autolab-uv-cache`: fixou Django 5.2.18 sem atualizar as outras nove dependências.
+- `uv pip sync requirements.txt --python .venv/bin/python --cache-dir /tmp/autolab-uv-cache`: substituiu Django 5.1.15 por 5.2.18.
+- `.venv/bin/python -m django --version`: 5.2.18.
+- `.venv/bin/python manage.py check`: sem problemas.
+- `.venv/bin/python manage.py test` e `.venv/bin/python -m pytest -p no:cacheprovider`: 21 testes passaram em cada suíte.
+- `.venv/bin/python manage.py makemigrations --check --dry-run`: No changes detected.
+- `uv pip check --python .venv/bin/python --cache-dir /tmp/autolab-uv-cache`: dependências compatíveis.
+- Nenhum teste adicional foi necessário: a suíte existente verifica as rotas, configuração e renderização afetadas pela atualização. Validação visual e configuração de produção permanecem em suas entregas próprias.
+- PR previsto: LTS → dashboard enquanto a base não estiver integrada. Ordem de integração: layout → dashboard → LTS. Após integração da base, atualizar a branch e mudar o destino do PR para `dev` antes do merge. Push, merge e rebase não foram realizados nesta entrega.
