@@ -1,13 +1,13 @@
 """Views basicas do modulo core."""
 
-from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def home(request):
     """Pagina inicial / dashboard."""
-    return HttpResponse("AutoLab - Plataforma de Automacao")
+    return render(request, "core/home.html")
 
 
 def catalogo(request):
     """Catalogo de laboratorios."""
-    return HttpResponse("Catalogo de Laboratorios")
+    return render(request, "core/catalogo.html")

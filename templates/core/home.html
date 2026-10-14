@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}AutoLab — Plataforma de Automação com IA e Python{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="mb-5">
+  <div class="p-4 p-md-5 rounded-3" style="background: linear-gradient(135deg, var(--autolab-primary-light) 0%, #dbeafe 100%); border: 1px solid #bfdbfe;">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h1 class="fw-bold mb-3" style="color: var(--autolab-primary);">
+          Bem-vindo ao AutoLab
+        </h1>
+        <p class="fs-5 mb-3" style="color: var(--autolab-text);">
+          Aprenda a automatizar tarefas do dia a dia usando <strong>Python</strong> e <strong>Inteligência Artificial</strong>.
+          A plataforma reunirá laboratórios práticos, automações prontas e desafios — tudo pelo navegador.
+        </p>
+        <p class="text-muted mb-4">
+          Plataforma em desenvolvimento. As automações e os exercícios ainda não estão disponíveis.
+        </p>
+        <a href="{% url 'core:catalogo' %}" class="btn btn-lg px-4 py-2 fw-semibold" style="background-color: var(--autolab-primary); color: #fff;">
+          Explorar Laboratórios
+        </a>
+      </div>
+      <div class="col-lg-4 d-none d-lg-flex justify-content-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="var(--autolab-primary)" viewBox="0 0 16 16" aria-hidden="true" style="opacity: 0.15;">
+          <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+          <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Fluxo em 3 Passos -->
+<section class="mb-5">
+  <h2 class="h4 fw-bold mb-4" style="color: var(--autolab-text);">Como funciona?</h2>
+  <div class="row g-4">
+    <!-- Passo 1 -->
+    <div class="col-md-4">
+      <div class="autolab-card p-4 h-100 text-center">
+        <div class="mb-3">
+          <span class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 56px; height: 56px; background-color: var(--autolab-primary-light); color: var(--autolab-primary);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
+            </svg>
+          </span>
+        </div>
+        <h3 class="h5 fw-semibold">1. Aprenda</h3>
+        <p class="text-muted mb-0">
+          Leia o objetivo, entenda o problema e veja exemplos reais de automação aplicada.
+        </p>
+      </div>
+    </div>
+
+    <!-- Passo 2 -->
+    <div class="col-md-4">
+      <div class="autolab-card p-4 h-100 text-center">
+        <div class="mb-3">
+          <span class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 56px; height: 56px; background-color: #f0fdf4; color: #15803d;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294l4-13zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0zm6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z"/>
+            </svg>
+          </span>
+        </div>
+        <h3 class="h5 fw-semibold">2. Execute</h3>
+        <p class="text-muted mb-0">
+          Rode demonstrações prontas no navegador e veja o resultado da automação na prática.
+        </p>
+      </div>
+    </div>
+
+    <!-- Passo 3 -->
+    <div class="col-md-4">
+      <div class="autolab-card p-4 h-100 text-center">
+        <div class="mb-3">
+          <span class="d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 56px; height: 56px; background-color: #fef3c7; color: #b45309;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/>
+            </svg>
+          </span>
+        </div>
+        <h3 class="h5 fw-semibold">3. Resolva</h3>
+        <p class="text-muted mb-0">
+          Abra o exercício no Codespaces, complete o desafio e valide seus resultados.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Destaques dos Laboratórios MVP -->
+<section class="mb-5">
+  <h2 class="h4 fw-bold mb-4" style="color: var(--autolab-text);">Laboratórios previstos</h2>
+  <div class="row g-4">
+    <!-- Arquivos -->
+    <div class="col-md-4">
+      <div class="autolab-card p-4 h-100 d-flex flex-column">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="var(--autolab-primary)" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31z"/>
+          </svg>
+          <h3 class="h5 fw-semibold mb-0">Arquivos &amp; Pastas</h3>
+        </div>
+        <p class="text-muted flex-grow-1">
+          O laboratório permitirá organizar arquivos por extensão, gerar um inventário e baixar um ZIP categorizado.
+        </p>
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="badge badge-status-em-breve px-2 py-1">Em breve</span>
+          <button type="button" class="btn btn-sm btn-outline-secondary" disabled aria-label="Laboratório de Arquivos e Pastas em breve">Em breve</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Planilhas -->
+    <div class="col-md-4">
+      <div class="autolab-card p-4 h-100 d-flex flex-column">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="var(--autolab-primary)" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
+            <path d="M3 9.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5z"/>
+          </svg>
+          <h3 class="h5 fw-semibold mb-0">Planilhas</h3>
+        </div>
+        <p class="text-muted flex-grow-1">
+          O laboratório permitirá limpar dados de CSV e Excel, remover duplicatas e exportar resultados.
+        </p>
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="badge badge-status-em-breve px-2 py-1">Em breve</span>
+          <button type="button" class="btn btn-sm btn-outline-secondary" disabled aria-label="Laboratório de Planilhas em breve">Em breve</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- IA -->
+    <div class="col-md-4">
+      <div class="autolab-card p-4 h-100 d-flex flex-column">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="var(--autolab-primary)" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5ZM3 8.062C3 6.76 4.235 5.765 5.53 5.886a26.58 26.58 0 0 0 4.94 0C11.765 5.765 13 6.76 13 8.062v1.157a.933.933 0 0 1-.765.935c-.845.147-2.34.346-4.235.346-1.895 0-3.39-.2-4.235-.346A.933.933 0 0 1 3 9.219V8.062Zm4.542-.827a.25.25 0 0 0-.217.068l-.92.9a24.767 24.767 0 0 1-1.871-.183.25.25 0 0 0-.068.495c.55.076 1.232.149 2.02.193a.25.25 0 0 0 .189-.071l.754-.736.847 1.71a.25.25 0 0 0 .404.062l.932-.97a25.286 25.286 0 0 0 1.922-.188.25.25 0 0 0-.068-.495c-.538.074-1.207.145-1.98.189a.25.25 0 0 0-.166.076l-.754.785-.842-1.7a.25.25 0 0 0-.182-.135Z"/>
+            <path d="M8.5 1.866a1 1 0 1 0-1 0V3h-2A4.5 4.5 0 0 0 1 7.5V8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1v-.5A4.5 4.5 0 0 0 10.5 3h-2V1.866ZM14 7.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5A3.5 3.5 0 0 1 5.5 4h5A3.5 3.5 0 0 1 14 7.5Z"/>
+          </svg>
+          <h3 class="h5 fw-semibold mb-0">IA &amp; Prompts</h3>
+        </div>
+        <p class="text-muted flex-grow-1">
+          O laboratório apresentará prompts e classificação de solicitações fictícias com apoio de IA.
+        </p>
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="badge badge-status-em-breve px-2 py-1">Em breve</span>
+          <button type="button" class="btn btn-sm btn-outline-secondary" disabled aria-label="Laboratório de IA e Prompts em breve">Em breve</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Informações complementares -->
+<section class="mb-4">
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="autolab-card p-4 h-100">
+        <h3 class="h5 fw-semibold mb-2">🎯 Objetivo da Oficina</h3>
+        <p class="text-muted mb-0">
+          Aprender automação de processos do dia a dia usando Python e IA, com exercícios práticos
+          no navegador. Ideal para quem está começando ou quer explorar novas ferramentas.
+        </p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="autolab-card p-4 h-100">
+        <h3 class="h5 fw-semibold mb-2">💻 Ambiente de Código</h3>
+        <p class="text-muted mb-0">
+          Os exercícios serão preparados para o <strong>GitHub Codespaces</strong>, com editor e terminal Python
+          no navegador. Será necessária uma conta GitHub com acesso e cota disponível. Esse ambiente ainda está em preparação.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
