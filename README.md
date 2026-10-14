@@ -107,6 +107,27 @@ Acesse [http://127.0.0.1:8000/](http://127.0.0.1:8000/) no seu navegador.
 
 ## 📐 Padrões de Contribuição
 
+O workflow [Testes Django](.github/workflows/tests.yml) executa em pushes para
+`feat/*`, `dev` e `main`, e em PRs destinados a `dev` ou `main`. Usa Python 3.12,
+dependências fixadas, verificações do Django, migrações pendentes e as suítes
+Django e pytest. A IA permanece desativada e não são necessários segredos.
+Qualquer etapa que falhar faz o check `Django / Python 3.12` falhar.
+
+Para reproduzir as verificações após instalar as dependências:
+
+```bash
+python -m pip check
+python manage.py check
+python manage.py makemigrations --check --dry-run
+python manage.py test
+python -m pytest -p no:cacheprovider
+```
+
+O [modelo de PR](.github/pull_request_template.md) segue a seção 13 da política
+de versionamento. Remova placeholders como `Closes #XX` quando não houver issue.
+Depois da primeira execução remota bem-sucedida, o check pode ser exigido na
+proteção de branches; o workflow não configura essa proteção automaticamente.
+
 O projeto adota regras estritas de desenvolvimento em branches pequenas e commits atômicos padronizados:
 
 - **Branches permanentes:** `main` (estável/produção) e `dev` (integração).
