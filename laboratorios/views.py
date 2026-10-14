@@ -3,7 +3,9 @@
 from django.conf import settings
 from django.http import FileResponse, Http404
 from django.shortcuts import render
-from django.views.decorators.http import require_safe
+from django.views.decorators.http import require_POST, require_safe
+
+from .forms import UploadZIPForm
 
 
 ETAPAS_ARQUIVOS = (
@@ -18,7 +20,27 @@ def arquivos(request):
     """Laboratorio de Arquivos e Pastas."""
     return render(request, "laboratorios/arquivos.html", {
         "etapas": ETAPAS_ARQUIVOS,
+        "etapa_ativa": "aprender",
+        "form": UploadZIPForm(),
     })
+
+
+@require_POST
+def organizar_arquivos(request):
+    """Recebe e confere o upload; ainda não inspeciona ou organiza ZIPs."""
+    form = UploadZIPForm(request.POST, request.FILES)
+    nome_recebido = None
+    status = 400
+    if form.is_valid():
+        nome_recebido = form.cleaned_data["arquivo_zip"].name
+        status = 200
+        form = UploadZIPForm()
+    return render(request, "laboratorios/arquivos.html", {
+        "etapas": ETAPAS_ARQUIVOS,
+        "etapa_ativa": "executar",
+        "form": form,
+        "nome_recebido": nome_recebido,
+    }, status=status)
 
 
 @require_safe

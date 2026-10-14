@@ -1,10 +1,10 @@
 <nav class="mb-4" aria-label="Etapas do laboratório">
   <div class="nav nav-tabs flex-wrap" role="tablist">
     {% for slug, titulo in etapas %}
-      <a class="nav-link{% if forloop.first %} active{% endif %}"
+      <a class="nav-link{% if slug == etapa_ativa %} active{% endif %}"
          id="{{ prefix }}-{{ slug }}-tab" href="#{{ prefix }}-{{ slug }}"
          data-bs-toggle="tab" role="tab" aria-controls="{{ prefix }}-{{ slug }}"
-         aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">{{ titulo }}</a>
+         aria-selected="{% if slug == etapa_ativa %}true{% else %}false{% endif %}">{{ titulo }}</a>
     {% endfor %}
   </div>
 </nav>
