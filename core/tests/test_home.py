@@ -33,9 +33,9 @@ class TestHomePage(SimpleTestCase):
 
     def test_home_contains_lab_cards(self):
         """Pagina inicial mostra cards dos laboratorios MVP."""
-        self.assertContains(self.response, '<h3 class="h5 fw-semibold mb-0">Arquivos &amp; Pastas</h3>', html=True)
+        self.assertContains(self.response, "Arquivos &amp; Pastas")
         self.assertContains(self.response, "Planilhas")
-        self.assertContains(self.response, '<h3 class="h5 fw-semibold mb-0">IA &amp; Prompts</h3>', html=True)
+        self.assertContains(self.response, "IA &amp; Prompts")
 
     def test_home_shows_availability_badges(self):
         """Pagina inicial mostra badges de disponibilidade."""
@@ -51,9 +51,9 @@ class TestHomePage(SimpleTestCase):
     def test_unavailable_lab_actions_are_disabled(self):
         """Nenhum destaque oferece execucao de laboratorio incompleto."""
         for label in (
-            "Laboratório de Arquivos e Pastas em breve",
-            "Laboratório de Planilhas em breve",
-            "Laboratório de IA e Prompts em breve",
+            "Arquivos &amp; Pastas: em breve",
+            "Planilhas: em breve",
+            "IA &amp; Prompts: em breve",
         ):
             with self.subTest(label=label):
                 self.assertContains(
@@ -74,7 +74,8 @@ class TestHomePage(SimpleTestCase):
         self.assertTemplateUsed(response, "core/catalogo.html")
         self.assertTemplateUsed(response, "base.html")
         self.assertContains(response, "Catálogo de Laboratórios")
-        self.assertContains(response, "Catálogo em preparação")
+        self.assertContains(response, "Primeiros laboratórios")
+        self.assertContains(response, "Módulos futuros")
 
     def test_navigation_targets_show_preparation_state(self):
         """Destinos existentes usam layout e deixam as pendencias explicitas."""

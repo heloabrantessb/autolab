@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 14/10/2026  
-**Status:** implementação incremental em andamento: base Django, layout, dashboard e Django 5.2 LTS integrados em `dev` local e remota. CI e modelo de PR implementados na `feat/qualidade-repositorio`, com verificações locais concluídas e execução remota pendente. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django, layout, dashboard, Django 5.2 LTS, CI e modelo de PR integrados em `dev`. Catálogo implementado e validado na `feat/catalogo-laboratorios`, aguardando envio e revisão. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Enviar `feat/qualidade-repositorio`, abrir PR para `dev` e confirmar o primeiro check remoto. Após revisão e integração autorizada, iniciar `feat/catalogo-laboratorios`: seis módulos previstos, nível, resumo e disponibilidade real. Depois, preparar a página didática e o primeiro fluxo de Arquivos: **upload ZIP → organização segura → relatório → download**. Cada entrega exige escopo próprio.
+Enviar `feat/catalogo-laboratorios`, abrir PR para `dev`, confirmar o CI e revisar a entrega. Após integração autorizada, iniciar `feat/laboratorio-arquivos-pagina`: conteúdo didático e seis etapas acessíveis, com exemplo fictício. Depois, implementar o primeiro fluxo de Arquivos: **upload ZIP → organização segura → relatório → download** em branches separadas.
 
 ---
 
@@ -542,7 +542,8 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 14/10/2026 | Escopo | Catalogo, Arquivos e Exercicios possuem apenas paginas provisorias com layout para sustentar a navegacao; nao representam funcionalidades completas |
 | 14/10/2026 | Integrado | Django atualizado de 5.1.15 para 5.2.18; dependencias restantes preservadas; README alinhado; PR #3 integrado em `dev` |
 | 14/10/2026 | Integrado | Layout integrado pelo PR #1; PRs #1, #2 e #3 preservam commits com merge commit; `dev` sincronizada em `28ab2b8` |
-| 14/10/2026 | Implementado na feature | Workflow de testes e modelo de PR adicionados em `feat/qualidade-repositorio`; comandos validados localmente; execucao GitHub Actions pendente |
+| 14/10/2026 | Integrado | Workflow de testes e modelo de PR integrados pelo PR #4; falha inicial de contexto corrigida; checks remotos aprovados |
+| 14/10/2026 | Implementado na feature | Catalogo com seis laboratorios, niveis, resumos e disponibilidade; dados e cards compartilhados com a home; todas as automacoes permanecem em breve |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
 ### Evidencias da entrega do dashboard
@@ -561,6 +562,7 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 
 ### Changelog
 
+- **14/10/2026 — catálogo:** catálogo completo com três módulos da primeira versão e três futuros; conteúdo estático em `core/catalogo.py`, card reutilizável e disponibilidade centralizada na home. Testes e verificações visuais desktop/mobile concluídos; sem processamento de automações.
 - **14/10/2026 — qualidade:** workflow GitHub Actions e modelo obrigatório de PR adicionados; README explica checks e reprodução local. Progresso reconciliado com a integração dos PRs #1, #2 e #3, sem alterar os contratos funcionais.
 - **14/10/2026 — Django LTS:** dependência direta alterada para `>=5.2,<5.3`, lock regenerado, ambiente sincronizado e compatibilidade validada pelos testes existentes. Sem alterações funcionais, de settings ou de modelos.
 - **14/10/2026 — dashboard:** progresso alinhado ao repositorio; home implementada e testada na feature, disponibilidade corrigida e paginas provisorias de navegacao preservadas. Contratos funcionais do MVP mantidos.
@@ -577,8 +579,8 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [x] Dashboard inicial implementado, testado e integrado em `dev` (PR #2).
 - [x] Django 5.2.18 instalado, validado e integrado em `dev` (PR #3).
 - [x] Workflow CI e modelo de PR implementados na feature, com validação local.
-- [ ] Primeira execução do CI confirmada no GitHub e integração da feature.
-- [ ] Catalogo completo de laboratorios implementado.
+- [x] CI confirmado no GitHub e qualidade integrada pelo PR #4.
+- [x] Catálogo completo implementado e validado na feature (envio e integração pendentes).
 - [ ] Laboratório de Arquivos implementado e testado.
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Devcontainer Codespaces validado.
@@ -617,3 +619,16 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Execução real de actions, cache e runner hospedado ainda não confirmada; depende do push e do primeiro check remoto. Não declarar o CI remoto aprovado com base na execução local.
 - Proteção de branches não foi modificada. Exigir o check `Django / Python 3.12` requer configuração separada após a primeira execução.
 - Primeira execução remota: run `38630913222` falhou antes dos jobs por uso inválido de `runner.temp` no bloco `jobs.django.env`. Corrigido para configurar `RESULTS_ROOT` em uma etapa via `RUNNER_TEMP` e `GITHUB_ENV`. A validação YAML local não substitui a validação das expressões do GitHub; aguardar nova execução antes da integração.
+- Atualização: runs `38631610859` e `38631608939`, no commit `a7dc53c`, concluídos com sucesso. PR #4 integrado com merge commit em `4734c14`; `dev` local sincronizada. As pendências de execução remota acima descrevem o estado anterior à correção.
+
+### Evidências da entrega do catálogo
+
+- Branch: `feat/catalogo-laboratorios`, criada da `dev` em `28ab2b8`. A qualidade foi integrada durante o desenvolvimento; a base foi atualizada por merge da `dev` em `4734c14`, sem conflitos ou reescrita de commits.
+- Dados estáticos versionados em `core/catalogo.py`; catálogo mantém a rota `core:catalogo` em `/laboratorios/`. Nenhum modelo de banco adicionado.
+- Arquivos, Planilhas e IA na primeira versão; PDFs, APIs e Automação Web explicitamente futuros. Níveis estimados para orientar iniciantes; conteúdos detalhados ficam nas entregas didáticas próprias.
+- `partials/lab_card.html` compartilhado entre home e catálogo. Um botão de acesso só aparece quando disponibilidade e rota válida estiverem declaradas. Todos os seis módulos atuais permanecem em breve; Arquivos tem apenas página provisória.
+- `.venv/bin/python manage.py check`: sem problemas; `.venv/bin/python manage.py test` e `.venv/bin/python -m pytest -p no:cacheprovider`: 26 testes passaram em cada suíte; migrações pendentes: nenhuma.
+- Testes cobrem seis módulos, níveis/resumos, três destaques MVP na home, ações incompletas desativadas, disponibilidade compartilhada e flag disponível sem rota.
+- Verificação no navegador local em desktop e mobile 390 × 844: cards legíveis e sem rolagem horizontal no tamanho mobile testado; menu mobile abriu. Tab seguido de Enter no link para pular ao conteúdo levou o foco a `main-content`. Isso não constitui auditoria completa de acessibilidade ou contraste.
+- Evidências visuais locais: `/tmp/autolab-catalogo-desktop.png` e `/tmp/autolab-catalogo-mobile.png` (não versionadas).
+- Execução remota desta branch ainda pendente do push manual e do PR. Nenhum upload, download, exercício ou operação de laboratório implementado nesta entrega.

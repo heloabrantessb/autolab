@@ -1,0 +1,14 @@
+<article class="autolab-card p-4 h-100 d-flex flex-column" aria-labelledby="lab-{{ lab.slug }}-titulo">
+  <h3 id="lab-{{ lab.slug }}-titulo" class="h5 fw-semibold mb-3">{{ lab.titulo }}</h3>
+  <p class="text-muted flex-grow-1">{{ lab.resumo }}</p>
+  <p class="small text-muted">Nível: {{ lab.nivel }}</p>
+  <div class="d-flex align-items-center justify-content-between gap-2">
+    {% if lab.disponivel and lab.rota %}
+      <span class="badge badge-status-disponivel px-2 py-1">Disponível</span>
+      <a href="{% url lab.rota %}" class="btn btn-sm btn-outline-primary" aria-label="Acessar {{ lab.titulo }}">Acessar</a>
+    {% else %}
+      <span class="badge badge-status-em-breve px-2 py-1">Em breve</span>
+      <button type="button" class="btn btn-sm btn-outline-secondary" disabled aria-label="{{ lab.titulo }}: em breve">Em breve</button>
+    {% endif %}
+  </div>
+</article>
