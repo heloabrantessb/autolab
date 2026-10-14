@@ -1,0 +1,63 @@
+name: Testes Django
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev, main, 'feat/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testes-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  django:
+    name: Django / Python 3.12
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      DJANGO_SECRET_KEY: autolab-chave-exclusiva-de-testes-ci
+      DJANGO_DEBUG: 'false'
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DJANGO_CSRF_TRUSTED_ORIGINS: ''
+      RESULT_TTL_MINUTES: '30'
+      LLM_ENABLED: 'false'
+      LLM_API_KEY: ''
+      LLM_MODEL: ''
+    steps:
+      - name: Configurar resultados temporários
+        run: echo "RESULTS_ROOT=${RUNNER_TEMP}/autolab-results" >> "$GITHUB_ENV"
+
+      - name: Obter código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Preparar Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Instalar dependências fixadas
+        run: python -m pip install -r requirements.txt
+
+      - name: Verificar dependências
+        run: python -m pip check
+
+      - name: Verificar configuração Django
+        run: python manage.py check
+
+      - name: Verificar migrações pendentes
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Executar testes Django
+        run: python manage.py test
+
+      - name: Executar pytest
+        run: python -m pytest -p no:cacheprovider
