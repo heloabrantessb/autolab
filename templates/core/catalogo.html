@@ -3,9 +3,33 @@
 {% block title %}Laboratórios — AutoLab{% endblock %}
 
 {% block content %}
-<section>
+<header class="mb-4">
   <h1 class="h3 fw-bold mb-3">Catálogo de Laboratórios</h1>
-  <p class="text-muted">Catálogo em preparação. As automações ainda não estão disponíveis.</p>
-  <a href="{% url 'core:home' %}" class="btn btn-outline-primary">Conhecer os laboratórios previstos</a>
+  <p class="text-muted">Conheça os temas e escolha por onde começar quando as atividades estiverem disponíveis.</p>
+  <p class="text-muted">As automações ainda estão em preparação. Os módulos marcados como “Em breve” não podem ser executados.</p>
+</header>
+
+<section class="mb-5" aria-labelledby="laboratorios-mvp-titulo">
+  <h2 id="laboratorios-mvp-titulo" class="h4 fw-bold mb-3">Primeiros laboratórios</h2>
+  <p class="text-muted">Arquivos, Planilhas e IA fazem parte da primeira versão da oficina.</p>
+  <div class="row g-4">
+    {% for lab in laboratorios_mvp %}
+      <div class="col-md-6 col-xl-4">
+        {% include "partials/lab_card.html" with lab=lab only %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="mb-4" aria-labelledby="laboratorios-futuros-titulo">
+  <h2 id="laboratorios-futuros-titulo" class="h4 fw-bold mb-3">Módulos futuros</h2>
+  <p class="text-muted">PDFs, APIs e Automação Web estão previstos para versões posteriores à primeira oficina.</p>
+  <div class="row g-4">
+    {% for lab in laboratorios_futuros %}
+      <div class="col-md-6 col-xl-4">
+        {% include "partials/lab_card.html" with lab=lab only %}
+      </div>
+    {% endfor %}
+  </div>
 </section>
 {% endblock %}

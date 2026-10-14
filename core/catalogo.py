@@ -1,0 +1,58 @@
+"""Conteúdo versionado dos laboratórios, sem persistência no banco."""
+
+LABORATORIOS = (
+    {
+        "slug": "arquivos",
+        "titulo": "Arquivos & Pastas",
+        "resumo": "Organize arquivos por extensão, gere um inventário e baixe um ZIP categorizado.",
+        "nivel": "Iniciante",
+        "mvp": True,
+        "disponivel": False,
+        "rota": "laboratorios:arquivos",
+    },
+    {
+        "slug": "planilhas",
+        "titulo": "Planilhas",
+        "resumo": "Limpe dados de CSV e Excel, remova duplicatas e exporte resultados.",
+        "nivel": "Iniciante",
+        "mvp": True,
+        "disponivel": False,
+        "rota": None,
+    },
+    {
+        "slug": "ia",
+        "titulo": "IA & Prompts",
+        "resumo": "Aprenda a criar prompts e classificar solicitações fictícias com apoio de IA.",
+        "nivel": "Básico",
+        "mvp": True,
+        "disponivel": False,
+        "rota": None,
+    },
+    {
+        "slug": "pdfs",
+        "titulo": "PDFs",
+        "resumo": "Explore extração de texto, união de documentos e geração de relatórios.",
+        "nivel": "Básico",
+        "mvp": False,
+        "disponivel": False,
+        "rota": None,
+    },
+    {
+        "slug": "apis",
+        "titulo": "APIs",
+        "resumo": "Conheça HTTP e JSON para consumir dados públicos e automatizar consultas.",
+        "nivel": "Básico",
+        "mvp": False,
+        "disponivel": False,
+        "rota": None,
+    },
+    {
+        "slug": "web",
+        "titulo": "Automação Web",
+        "resumo": "Explore navegação automatizada e preenchimento de formulários fictícios.",
+        "nivel": "Básico",
+        "mvp": False,
+        "disponivel": False,
+        "rota": None,
+    },
+)
