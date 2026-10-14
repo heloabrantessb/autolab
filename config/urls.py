@@ -1,8 +1,11 @@
 """URL Configuration for AutoLab project."""
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", include("core.urls", namespace="core")),
+    path("laboratorios/", include("laboratorios.urls", namespace="laboratorios")),
+    path("exercicios/", include("exercicios.urls", namespace="exercicios")),
 ]

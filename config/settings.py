@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # AutoLab apps
+    "core.apps.CoreConfig",
+    "laboratorios.apps.LaboratoriosConfig",
+    "exercicios.apps.ExerciciosConfig",
 ]
 
 MIDDLEWARE = [
