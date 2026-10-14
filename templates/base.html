@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AutoLab — Plataforma educacional para oficina de Automação de Processos com IA e Python.">
+  <title>{% block title %}AutoLab — Automação com IA e Python{% endblock %}</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+  
+  <!-- Estilos Customizados AutoLab -->
+  <link rel="stylesheet" href="{% static 'css/autolab.css' %}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <!-- Link de Acessibilidade para Leitor de Tela e Teclado -->
+  <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+
+  <!-- Barra Superior de Navegação -->
+  {% include "partials/navbar.html" %}
+
+  <!-- Estrutura Principal -->
+  <div class="autolab-wrapper">
+    <!-- Menu Lateral -->
+    {% include "partials/sidebar.html" %}
+
+    <!-- Conteúdo Central -->
+    <main id="main-content" class="autolab-content" tabindex="-1">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- Rodapé -->
+  {% include "partials/footer.html" %}
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  
+  <!-- Scripts Customizados AutoLab -->
+  <script src="{% static 'js/autolab.js' %}"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
