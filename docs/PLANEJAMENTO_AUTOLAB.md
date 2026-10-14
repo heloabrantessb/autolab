@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 14/10/2026  
-**Status:** especificação detalhada; implementação ainda não iniciada. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django e layout integrados na `dev` local; dashboard implementado e testado na branch `feat/dashboard-inicial`, aguardando revisão e integração. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Concluir especificação do laboratório de Arquivos, criar projeto Django e implementar o primeiro fluxo completo: **upload ZIP → organização segura → relatório → download**.
+Revisar e integrar o dashboard inicial. A próxima entrega planejada é `feat/atualizacao-django-lts`, criada a partir de `dev` atualizada após a integração do dashboard: alinhar dependências ao Django 5.2 LTS, validar compatibilidade e atualizar o README. Depois, preparar CI, catálogo completo e o primeiro fluxo de Arquivos: **upload ZIP → organização segura → relatório → download**. Cada entrega exige escopo próprio e integração autorizada.
 
 ---
 
@@ -537,10 +537,27 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 14/10/2026 | Confirmado | GitHub Codespaces como ambiente externo de programação |
 | 14/10/2026 | Confirmado | Arquivos primeiro; Planilhas e IA no MVP; PDFs/APIs/Web depois |
 | 14/10/2026 | Proposta técnica | Limites e retenção da seção 15, sujeitos à validação |
-| 14/10/2026 | Estado | Somente planejamento; nenhuma implementação foi confirmada |
+| 14/10/2026 | Implementado | Base Django e layout Bootstrap 5.3.3 integrados na `dev` local; settings por ambiente, rotas com namespace, navegacao responsiva e mensagens |
+| 14/10/2026 | Implementado na feature | Dashboard inicial com apresentacao, fluxo em tres passos e destaques MVP; todos os laboratorios marcados como em breve; aguardando revisao e integracao |
+| 14/10/2026 | Escopo | Catalogo, Arquivos e Exercicios possuem apenas paginas provisorias com layout para sustentar a navegacao; nao representam funcionalidades completas |
+| 14/10/2026 | Pendencia tecnica | Django instalado e fixado em 5.1.15; alinhar a serie 5.2 LTS em entrega separada, sem expandir o dashboard |
+| 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
+
+### Evidencias da entrega do dashboard
+
+- Branch: `feat/dashboard-inicial`; base local: `dev`, commit `1b456be`.
+- `git fetch origin` executado; `git rev-list --left-right --count dev...origin/dev` retornou `5 0`. A base local inclui cinco commits ainda nao presentes na `origin/dev`; reconciliar a integracao do layout antes de publicar o PR do dashboard.
+- `.venv/bin/python manage.py check`: sem problemas.
+- `.venv/bin/python manage.py test`: 21 testes, todos passaram.
+- `.venv/bin/python -m pytest -p no:cacheprovider`: 21 testes passaram.
+- `git diff --check`: sem problemas.
+- Testes cobrem renderizacao da home, fluxo em tres passos, CTA do catalogo, estados em breve, acoes desativadas e paginas provisorias de navegacao, alem dos testes existentes de layout e configuracao.
+- Verificacao visual em navegador, mobile e teclado ainda nao realizada. Os testes de HTML nao comprovam contraste ou usabilidade visual.
+- Sem processamento de uploads, downloads, exercicios executaveis ou devcontainer nesta entrega. Sem push, merge ou publicacao.
 
 ### Changelog
 
+- **14/10/2026 — dashboard:** progresso alinhado ao repositorio; home implementada e testada na feature, disponibilidade corrigida e paginas provisorias de navegacao preservadas. Contratos funcionais do MVP mantidos.
 - **v2.0:** contrato de implementação detalhado, UX, rotas, algoritmos, defaults operacionais, serviços, segurança, testes, critérios de aceite, tarefas e decisões confirmadas vs. propostas.
 - **v1.0:** planejamento geral, módulos, arquitetura Django e primeiro laboratório.
 
@@ -550,7 +567,9 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 - [x] Bootstrap 5 escolhido.
 - [x] Especificação técnica de Arquivos e contratos de MVP documentados.
 - [x] Repositório Django criado.
-- [ ] Layout e navegação implementados.
+- [x] Layout e navegação implementados na `dev` local.
+- [x] Dashboard inicial implementado e testado na `feat/dashboard-inicial` (integracao pendente).
+- [ ] Catalogo completo de laboratorios implementado.
 - [ ] Laboratório de Arquivos implementado e testado.
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Devcontainer Codespaces validado.
