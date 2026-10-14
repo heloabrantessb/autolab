@@ -1,8 +1,8 @@
 """Views dos exercicios."""
 
-from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def lista(request):
     """Lista de exercicios."""
-    return HttpResponse("Lista de Exercicios")
+    return render(request, "exercicios/lista.html")

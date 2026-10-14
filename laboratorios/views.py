@@ -1,8 +1,8 @@
 """Views dos laboratorios de automacao."""
 
-from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def arquivos(request):
     """Laboratorio de Arquivos e Pastas."""
-    return HttpResponse("Laboratorio de Arquivos")
+    return render(request, "laboratorios/arquivos.html")
