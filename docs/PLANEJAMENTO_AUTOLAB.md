@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 14/10/2026  
-**Status:** implementação incremental em andamento: base Django, layout, dashboard, Django 5.2 LTS, CI, modelo de PR e catálogo integrados em `dev`. Página didática de Arquivos e ZIP fictício implementados e validados na `feat/laboratorio-arquivos-pagina`, aguardando envio e revisão. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django, layout, dashboard, Django 5.2 LTS, CI, catálogo e página didática de Arquivos integrados em `dev`. Formulário e recebimento inicial de ZIP implementados na `feat/upload-arquivos`, aguardando envio e revisão. Inspeção segura e organização ainda não implementadas. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Enviar `feat/laboratorio-arquivos-pagina`, abrir PR para `dev`, confirmar o CI e revisar. Após integração autorizada, iniciar `feat/upload-arquivos`: formulário de um ZIP, limites iniciais, método POST e CSRF, sem extração ou processamento antes da validação segura. Seguir depois com inspeção de ZIP, organização, relatório, download e limpeza em branches próprias.
+Enviar `feat/upload-arquivos`, abrir PR para `dev`, confirmar o CI e revisar. Após integração autorizada, iniciar `feat/validacao-zip`: inspeção de estrutura, caminhos, tipos especiais, criptografia e limites de entradas/expansão, com testes de ZIP malicioso. Só depois conectar a organização, relatório, download e limpeza em branches próprias.
 
 ---
 
@@ -544,7 +544,8 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 14/10/2026 | Integrado | Layout integrado pelo PR #1; PRs #1, #2 e #3 preservam commits com merge commit; `dev` sincronizada em `28ab2b8` |
 | 14/10/2026 | Integrado | Workflow de testes e modelo de PR integrados pelo PR #4; falha inicial de contexto corrigida; checks remotos aprovados |
 | 14/10/2026 | Integrado | Catalogo com seis laboratorios, niveis, resumos e disponibilidade; PR #5 integrado com dois checks aprovados; todas as automacoes permanecem em breve |
-| 14/10/2026 | Implementado na feature | Pagina didatica de Arquivos com seis etapas e ZIP ficticio baixavel; sem upload, processamento ou exercicio executavel |
+| 14/10/2026 | Integrado | Pagina didatica de Arquivos com seis etapas e ZIP ficticio baixavel; PR #6 integrado com os dois checks aprovados |
+| 14/10/2026 | Implementado na feature | Formulario e POST de recebimento inicial de ZIP com CSRF, extensao e limite de bytes; sem inspecao, extracao, organizacao ou resultado persistido |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
 ### Evidencias da entrega do dashboard
@@ -563,6 +564,7 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 
 ### Changelog
 
+- **14/10/2026 — upload:** formulário ZIP e endpoint POST adicionados com validação inicial de extensão, arquivo vazio, quantidade e tamanho. Conferência de bytes lidos e estados de erro/recebimento na aba Executar. Página didática integrada pelo PR #6.
 - **14/10/2026 — página de Arquivos:** seis etapas Bootstrap, categorias, trecho Python comentado, exercício conceitual, desafio e resultado esperado. ZIP fictício versionado com download por rota fixa GET/HEAD, sem acesso a caminhos do cliente. Catálogo integrado pelo PR #5.
 - **14/10/2026 — catálogo:** catálogo completo com três módulos da primeira versão e três futuros; conteúdo estático em `core/catalogo.py`, card reutilizável e disponibilidade centralizada na home. Testes e verificações visuais desktop/mobile concluídos; sem processamento de automações.
 - **14/10/2026 — qualidade:** workflow GitHub Actions e modelo obrigatório de PR adicionados; README explica checks e reprodução local. Progresso reconciliado com a integração dos PRs #1, #2 e #3, sem alterar os contratos funcionais.
@@ -583,7 +585,8 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [x] Workflow CI e modelo de PR implementados na feature, com validação local.
 - [x] CI confirmado no GitHub e qualidade integrada pelo PR #4.
 - [x] Catálogo completo integrado em `dev` pelo PR #5.
-- [x] Página didática e ZIP de exemplo de Arquivos implementados e validados na feature (envio e integração pendentes).
+- [x] Página didática e ZIP de exemplo integrados em `dev` pelo PR #6.
+- [x] Formulário e recebimento inicial de ZIP implementados e testados na feature (envio e integração pendentes).
 - [ ] Laboratório de Arquivos implementado e testado.
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Devcontainer Codespaces validado.
@@ -649,3 +652,18 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Navegador local: seis abas verificadas por clique; seta direita alternou Aprender → Executar e atualizou foco/seleção; download do exemplo concluído. Desktop e mobile 390 × 844 sem rolagem horizontal da página, incluindo aba Código Python. Verificação pontual, sem auditoria completa de acessibilidade.
 - Capturas locais: `/tmp/autolab-arquivos-desktop.png` e `/tmp/autolab-arquivos-mobile.png`, não versionadas.
 - Catálogo mantém Arquivos indisponível para execução. Formulário, validação segura, serviço, resultados temporários e exercício Codespaces permanecem nas próximas branches. Nenhum código de participante executado no servidor.
+- Atualização: PR #6 integrado após os dois checks aprovados; `dev` local sincronizada em `4c7e013`. As pendências de envio acima são históricas; o formulário foi desenvolvido na entrega seguinte.
+
+### Evidências do recebimento inicial de ZIP
+
+- Branch: `feat/upload-arquivos`; base: `dev`, commit `4c7e013`. Duas imagens locais não versionadas preexistentes foram preservadas e não incluídas nos commits.
+- Campo obrigatório `arquivo_zip`; formulário multipart com CSRF, extensão `.zip` sem distinção de maiúsculas e limite configurável `MAX_ZIP_UPLOAD_BYTES`, mantendo o default proposto de 10 MiB.
+- Arquivo ausente, vazio, extensão incorreta, bytes acima do limite e múltiplos arquivos (inclusive em campos extras) são recusados. `Content-Type` do cliente não é usado como prova de formato. A verificação inicial lê os bytes recebidos e restaura a posição do arquivo, sem interpretar o ZIP.
+- POST `/laboratorios/arquivos/organizar/`, nome `laboratorios:organizar_arquivos`: HTML 200 em recebimento aceito; 400 para erro do formulário; 403 sem CSRF; 405 para métodos diferentes de POST. O nome da rota segue o contrato, mas a organização ainda não ocorre.
+- Aba Executar ativa após POST, com erro acessível ou confirmação explícita de que apenas nome/tamanho foram conferidos. Nome do arquivo escapado pelo template. Não há resultado persistido, download de saída ou execução de código.
+- Resposta HTML direta, sem POST/Redirect/GET por enquanto: esta entrega não cria estado persistente ou resultado temporário. O padrão será revisto quando a organização e seus tokens forem integrados.
+- Arquivos podem ser temporariamente armazenados pelos upload handlers padrão do Django durante a requisição; não são salvos pela aplicação. O limite do formulário é posterior ao recebimento HTTP e não substitui limites no proxy ou servidor.
+- `.venv/bin/python manage.py check`: sem problemas; testes Django e pytest: 44 passaram em cada suíte; migrações: nenhuma mudança; `git diff --check`: sem problemas.
+- Testes cobrem CSRF real, método, tamanho exato e acima do limite, bytes reais apesar de metadado menor, envios múltiplos, MIME não confiável, escape do nome e ausência de resultados persistidos.
+- Navegador local: envio do ZIP fictício aceito com confirmação correta; README enviado como arquivo inválido retornou erro de extensão e manteve a aba Executar ativa. Mobile 390 × 844 sem rolagem horizontal no estado aceito. Capturas locais `/tmp/autolab-upload-sucesso.png` e `/tmp/autolab-upload-erro-mobile.png`, não versionadas.
+- Catálogo mantém Arquivos como em breve. ZIPs corrompidos, criptografados, com caminhos maliciosos ou expansões abusivas ainda não são inspecionados; não extrair ou organizar até concluir `feat/validacao-zip`. CI remoto desta feature depende do push manual.

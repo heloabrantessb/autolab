@@ -28,10 +28,10 @@ class TestPaginaArquivos(SimpleTestCase):
 
     def test_page_distinguishes_reference_from_execution(self):
         response = self.client.get(reverse("laboratorios:arquivos"))
-        self.assertContains(response, "O upload e a organização de arquivos ainda não estão disponíveis.")
+        self.assertContains(response, "A organização de arquivos ainda não está disponível.")
         self.assertContains(response, "Esta é uma referência didática, não o resultado de uma execução.")
         self.assertContains(response, "Exercício no Codespaces em breve")
-        self.assertNotContains(response, '<input type="file"')
+        self.assertContains(response, '<input type="file"')
         self.assertContains(response, "comunicado_2.txt")
         self.assertContains(response, "relatorio.csv")
 

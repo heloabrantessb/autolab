@@ -1,0 +1,21 @@
+{% if nome_recebido %}
+  <div class="alert alert-info" role="status" aria-live="polite">
+    Envio recebido: <strong>{{ nome_recebido }}</strong>.
+    Apenas o nome e o tamanho foram conferidos. A estrutura do ZIP ainda não foi validada;
+    nenhum arquivo foi organizado e nenhum resultado foi gerado.
+  </div>
+{% endif %}
+{% if form.errors %}
+  <div class="alert alert-danger" role="alert">Não foi possível receber o arquivo. Confira os erros abaixo e selecione o ZIP novamente.</div>
+{% endif %}
+<form action="{% url 'laboratorios:organizar_arquivos' %}" method="post" enctype="multipart/form-data" class="mb-4">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <div class="mb-3">
+    <label for="{{ form.arquivo_zip.id_for_label }}" class="form-label">{{ form.arquivo_zip.label }}</label>
+    {{ form.arquivo_zip }}
+    <div class="form-text" id="{{ form.arquivo_zip.id_for_label }}_helptext">{{ form.arquivo_zip.help_text }}</div>
+    <div class="text-danger">{{ form.arquivo_zip.errors }}</div>
+  </div>
+  <button class="btn btn-primary" type="submit">Enviar ZIP</button>
+</form>
