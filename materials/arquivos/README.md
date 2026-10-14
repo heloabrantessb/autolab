@@ -25,6 +25,7 @@ Preserve o caminho original no inventário.
 
 ## Estado da atividade
 
-A página didática e o download do exemplo estão disponíveis. O upload,
-processamento, resultados e script-base Codespaces ficam nas próximas entregas.
-O site não executa o código do participante.
+A página didática, o download do exemplo e o recebimento inicial de um ZIP estão
+disponíveis. O envio confere apenas extensão e tamanho, sem inspecionar a
+estrutura ou organizar o conteúdo. Processamento, resultados e script-base
+Codespaces ficam nas próximas entregas. O site não executa código do participante.
