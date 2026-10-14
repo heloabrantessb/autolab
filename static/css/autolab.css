@@ -1,0 +1,206 @@
+/* AutoLab — Folha de Estilos Customizada */
+
+:root {
+  --autolab-primary: #1e3a8a;
+  --autolab-primary-hover: #1e40af;
+  --autolab-primary-light: #eff6ff;
+  --autolab-accent: #0284c7;
+  --autolab-bg: #f8fafc;
+  --autolab-surface: #ffffff;
+  --autolab-text: #0f172a;
+  --autolab-text-muted: #64748b;
+  --autolab-border: #e2e8f0;
+  --autolab-sidebar-width: 260px;
+  --autolab-focus-ring: #2563eb;
+}
+
+/* Acessibilidade: Skip Link para teclado */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 10px;
+  background: var(--autolab-primary);
+  color: #ffffff;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 4px;
+  z-index: 1100;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 10px;
+  outline: 3px solid #facc15;
+}
+
+/* Foco visível consistente para acessibilidade */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--autolab-focus-ring) !important;
+  outline-offset: 2px !important;
+}
+
+/* Estrutura Base */
+body {
+  background-color: var(--autolab-bg);
+  color: var(--autolab-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Barra Superior */
+.autolab-navbar {
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--autolab-border);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.autolab-brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--autolab-primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.autolab-brand:hover {
+  color: var(--autolab-primary-hover);
+}
+
+.autolab-brand .badge-tag {
+  font-size: 0.7rem;
+  background-color: var(--autolab-primary-light);
+  color: var(--autolab-primary);
+  border: 1px solid #bfdbfe;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.25rem;
+}
+
+/* Layout Principal: Sidebar + Conteúdo */
+.autolab-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+/* Menu Lateral (Sidebar) */
+.autolab-sidebar {
+  width: var(--autolab-sidebar-width);
+  background-color: #ffffff;
+  border-right: 1px solid var(--autolab-border);
+  min-height: calc(100vh - 61px);
+  padding: 1.25rem 0.75rem;
+}
+
+.autolab-sidebar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.autolab-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  color: var(--autolab-text);
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.autolab-sidebar-link:hover {
+  background-color: #f1f5f9;
+  color: var(--autolab-primary);
+}
+
+.autolab-sidebar-link.active,
+.autolab-sidebar-link[aria-current="page"] {
+  background-color: var(--autolab-primary-light);
+  color: var(--autolab-primary);
+  font-weight: 600;
+}
+
+.autolab-sidebar-heading {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--autolab-text-muted);
+  padding: 0.75rem 0.85rem 0.35rem;
+  margin-top: 0.5rem;
+}
+
+/* Área de Conteúdo */
+.autolab-content {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  min-width: 0;
+}
+
+/* Rodapé */
+.autolab-footer {
+  background-color: #ffffff;
+  border-top: 1px solid var(--autolab-border);
+  color: var(--autolab-text-muted);
+  font-size: 0.875rem;
+  padding: 1rem 0;
+  margin-top: auto;
+}
+
+/* Cards & Componentes Didáticos */
+.autolab-card {
+  background: #ffffff;
+  border: 1px solid var(--autolab-border);
+  border-radius: 0.5rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.autolab-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Badges de Status dos Laboratórios */
+.badge-status-disponivel {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  font-weight: 600;
+}
+
+.badge-status-em-breve {
+  background-color: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  font-weight: 500;
+}
+
+/* Alertas Acessíveis */
+.autolab-alert {
+  border-left-width: 4px;
+}
+
+/* Responsividade Mobile */
+@media (max-width: 991.98px) {
+  .autolab-sidebar {
+    display: none;
+  }
+  
+  .autolab-content {
+    padding: 1rem;
+  }
+}
