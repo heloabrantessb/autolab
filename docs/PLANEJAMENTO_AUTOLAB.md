@@ -616,3 +616,4 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Nenhum teste adicional de produto necessário: a entrega configura a execução dos testes existentes. Falhas de comandos encerram a etapa; não há `continue-on-error`.
 - Execução real de actions, cache e runner hospedado ainda não confirmada; depende do push e do primeiro check remoto. Não declarar o CI remoto aprovado com base na execução local.
 - Proteção de branches não foi modificada. Exigir o check `Django / Python 3.12` requer configuração separada após a primeira execução.
+- Primeira execução remota: run `38630913222` falhou antes dos jobs por uso inválido de `runner.temp` no bloco `jobs.django.env`. Corrigido para configurar `RESULTS_ROOT` em uma etapa via `RUNNER_TEMP` e `GITHUB_ENV`. A validação YAML local não substitui a validação das expressões do GitHub; aguardar nova execução antes da integração.

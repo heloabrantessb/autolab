@@ -24,12 +24,14 @@ jobs:
       DJANGO_DEBUG: 'false'
       DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
       DJANGO_CSRF_TRUSTED_ORIGINS: ''
-      RESULTS_ROOT: ${{ runner.temp }}/autolab-results
       RESULT_TTL_MINUTES: '30'
       LLM_ENABLED: 'false'
       LLM_API_KEY: ''
       LLM_MODEL: ''
     steps:
+      - name: Configurar resultados temporários
+        run: echo "RESULTS_ROOT=${RUNNER_TEMP}/autolab-results" >> "$GITHUB_ENV"
+
       - name: Obter código
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
