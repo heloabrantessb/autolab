@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 14/10/2026  
-**Status:** implementação incremental em andamento: base Django, layout, dashboard, Django 5.2 LTS, CI e modelo de PR integrados em `dev`. Catálogo implementado e validado na `feat/catalogo-laboratorios`, aguardando envio e revisão. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django, layout, dashboard, Django 5.2 LTS, CI, modelo de PR e catálogo integrados em `dev`. Página didática de Arquivos e ZIP fictício implementados e validados na `feat/laboratorio-arquivos-pagina`, aguardando envio e revisão. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Enviar `feat/catalogo-laboratorios`, abrir PR para `dev`, confirmar o CI e revisar a entrega. Após integração autorizada, iniciar `feat/laboratorio-arquivos-pagina`: conteúdo didático e seis etapas acessíveis, com exemplo fictício. Depois, implementar o primeiro fluxo de Arquivos: **upload ZIP → organização segura → relatório → download** em branches separadas.
+Enviar `feat/laboratorio-arquivos-pagina`, abrir PR para `dev`, confirmar o CI e revisar. Após integração autorizada, iniciar `feat/upload-arquivos`: formulário de um ZIP, limites iniciais, método POST e CSRF, sem extração ou processamento antes da validação segura. Seguir depois com inspeção de ZIP, organização, relatório, download e limpeza em branches próprias.
 
 ---
 
@@ -543,7 +543,8 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 14/10/2026 | Integrado | Django atualizado de 5.1.15 para 5.2.18; dependencias restantes preservadas; README alinhado; PR #3 integrado em `dev` |
 | 14/10/2026 | Integrado | Layout integrado pelo PR #1; PRs #1, #2 e #3 preservam commits com merge commit; `dev` sincronizada em `28ab2b8` |
 | 14/10/2026 | Integrado | Workflow de testes e modelo de PR integrados pelo PR #4; falha inicial de contexto corrigida; checks remotos aprovados |
-| 14/10/2026 | Implementado na feature | Catalogo com seis laboratorios, niveis, resumos e disponibilidade; dados e cards compartilhados com a home; todas as automacoes permanecem em breve |
+| 14/10/2026 | Integrado | Catalogo com seis laboratorios, niveis, resumos e disponibilidade; PR #5 integrado com dois checks aprovados; todas as automacoes permanecem em breve |
+| 14/10/2026 | Implementado na feature | Pagina didatica de Arquivos com seis etapas e ZIP ficticio baixavel; sem upload, processamento ou exercicio executavel |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
 ### Evidencias da entrega do dashboard
@@ -562,6 +563,7 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 
 ### Changelog
 
+- **14/10/2026 — página de Arquivos:** seis etapas Bootstrap, categorias, trecho Python comentado, exercício conceitual, desafio e resultado esperado. ZIP fictício versionado com download por rota fixa GET/HEAD, sem acesso a caminhos do cliente. Catálogo integrado pelo PR #5.
 - **14/10/2026 — catálogo:** catálogo completo com três módulos da primeira versão e três futuros; conteúdo estático em `core/catalogo.py`, card reutilizável e disponibilidade centralizada na home. Testes e verificações visuais desktop/mobile concluídos; sem processamento de automações.
 - **14/10/2026 — qualidade:** workflow GitHub Actions e modelo obrigatório de PR adicionados; README explica checks e reprodução local. Progresso reconciliado com a integração dos PRs #1, #2 e #3, sem alterar os contratos funcionais.
 - **14/10/2026 — Django LTS:** dependência direta alterada para `>=5.2,<5.3`, lock regenerado, ambiente sincronizado e compatibilidade validada pelos testes existentes. Sem alterações funcionais, de settings ou de modelos.
@@ -580,7 +582,8 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [x] Django 5.2.18 instalado, validado e integrado em `dev` (PR #3).
 - [x] Workflow CI e modelo de PR implementados na feature, com validação local.
 - [x] CI confirmado no GitHub e qualidade integrada pelo PR #4.
-- [x] Catálogo completo implementado e validado na feature (envio e integração pendentes).
+- [x] Catálogo completo integrado em `dev` pelo PR #5.
+- [x] Página didática e ZIP de exemplo de Arquivos implementados e validados na feature (envio e integração pendentes).
 - [ ] Laboratório de Arquivos implementado e testado.
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Devcontainer Codespaces validado.
@@ -632,3 +635,17 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Verificação no navegador local em desktop e mobile 390 × 844: cards legíveis e sem rolagem horizontal no tamanho mobile testado; menu mobile abriu. Tab seguido de Enter no link para pular ao conteúdo levou o foco a `main-content`. Isso não constitui auditoria completa de acessibilidade ou contraste.
 - Evidências visuais locais: `/tmp/autolab-catalogo-desktop.png` e `/tmp/autolab-catalogo-mobile.png` (não versionadas).
 - Execução remota desta branch ainda pendente do push manual e do PR. Nenhum upload, download, exercício ou operação de laboratório implementado nesta entrega.
+- Atualização: catálogo integrado pelo PR #5 após aprovação dos dois checks; `dev` local sincronizada em `94dbb4a`. A pendência de envio acima é histórica.
+
+### Evidências da página didática de Arquivos
+
+- Branch: `feat/laboratorio-arquivos-pagina`; base: `dev`, commit `94dbb4a`.
+- Seis etapas: Aprender, Executar, Código Python, Exercício, Desafio e Resultado; abas Bootstrap com IDs, controles e painéis associados. Sem JavaScript, um fallback mostra todas as seções; esse fallback não foi testado em navegador nesta entrega.
+- Categorias e rastreabilidade conforme contrato; código exibido somente classifica nomes. Duração de 20 minutos é uma sugestão didática, a validar no ensaio.
+- `materials/arquivos/exemplo.zip` contém seis entradas fictícias: três TXT, um CSV, um PNG válido e um arquivo sem extensão. Documentos homônimos em pastas diferentes têm conteúdos distintos. README descreve contagens e resultado esperado.
+- GET/HEAD `/laboratorios/arquivos/exemplo/`, nome `laboratorios:exemplo_arquivos`, entrega exclusivamente o ZIP público versionado via FileResponse. POST recusado; parâmetros do cliente não determinam o caminho. Material ausente retorna 404.
+- `.venv/bin/python manage.py check`: sem problemas; testes Django e pytest: 32 passaram em cada suíte; `makemigrations --check --dry-run`: nenhuma mudança; `git diff --check`: sem problemas.
+- Testes cobrem as seis etapas, estado ainda indisponível, distinção entre referência e execução, conteúdo e integridade do ZIP, caminho fixo, 404 e recusa de POST.
+- Navegador local: seis abas verificadas por clique; seta direita alternou Aprender → Executar e atualizou foco/seleção; download do exemplo concluído. Desktop e mobile 390 × 844 sem rolagem horizontal da página, incluindo aba Código Python. Verificação pontual, sem auditoria completa de acessibilidade.
+- Capturas locais: `/tmp/autolab-arquivos-desktop.png` e `/tmp/autolab-arquivos-mobile.png`, não versionadas.
+- Catálogo mantém Arquivos indisponível para execução. Formulário, validação segura, serviço, resultados temporários e exercício Codespaces permanecem nas próximas branches. Nenhum código de participante executado no servidor.

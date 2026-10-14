@@ -7,4 +7,5 @@ app_name = "laboratorios"
 
 urlpatterns = [
     path("arquivos/", views.arquivos, name="arquivos"),
+    path("arquivos/exemplo/", views.exemplo_arquivos, name="exemplo_arquivos"),
 ]

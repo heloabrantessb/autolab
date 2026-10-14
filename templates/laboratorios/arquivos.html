@@ -3,9 +3,121 @@
 {% block title %}Laboratório de Arquivos — AutoLab{% endblock %}
 
 {% block content %}
-<section>
+<header class="mb-4">
   <h1 class="h3 fw-bold mb-3">Laboratório de Arquivos &amp; Pastas</h1>
-  <p class="text-muted">Em breve. O upload e a organização de arquivos ainda não estão disponíveis.</p>
-  <a href="{% url 'core:home' %}" class="btn btn-outline-primary">Voltar ao início</a>
-</section>
+  <p class="lead">Organize uma pasta de documentos misturados com Python e aprenda a gerar um inventário.</p>
+  <p class="small text-muted">Nível: iniciante · Pré-requisitos: noções de arquivos, pastas e extensões · Duração sugerida: 20 minutos.</p>
+  <div class="alert alert-info" role="status">
+    Conteúdo didático disponível. O upload e a organização de arquivos ainda não estão disponíveis.
+    O exercício executável e o ambiente Codespaces serão preparados em uma próxima entrega.
+  </div>
+</header>
+
+{% include "partials/lab_tabs.html" with etapas=etapas prefix="arquivos" only %}
+<noscript>
+  <style>.autolab-lab-panel.tab-pane { display: block; opacity: 1; margin-bottom: 2rem; }</style>
+  <p>As seis etapas estão disponíveis abaixo. Use os links para ir até cada seção.</p>
+</noscript>
+
+<div class="tab-content">
+  <section class="tab-pane autolab-lab-panel active" id="arquivos-aprender" role="tabpanel" aria-labelledby="arquivos-aprender-tab" tabindex="0">
+    <h2 class="h4">Aprender: organizar por extensão</h2>
+    <p>Uma equipe recebeu documentos, planilhas e imagens na mesma pasta. O objetivo é separar os arquivos em categorias, preservar todos os conteúdos e registrar de onde cada arquivo veio.</p>
+    <p>A extensão é a parte final do nome, como <code>.txt</code> ou <code>.csv</code>. Ela orienta a classificação; não comprova o formato real do conteúdo.</p>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <caption>Categorias previstas para a organização</caption>
+        <thead><tr><th scope="col">Categoria</th><th scope="col">Extensões</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Documentos</th><td>.pdf, .doc, .docx, .txt</td></tr>
+          <tr><th scope="row">Planilhas</th><td>.csv, .xls, .xlsx</td></tr>
+          <tr><th scope="row">Imagens</th><td>.png, .jpg, .jpeg</td></tr>
+          <tr><th scope="row">Outros</th><td>Demais extensões e arquivos sem extensão</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 class="h5">Antes de começar</h3>
+    <p>Use o material fictício de exemplo e trabalhe em uma cópia. Não use documentos pessoais na oficina e nunca execute arquivos recebidos de uma origem desconhecida.</p>
+    <a class="btn btn-outline-primary" href="{% url 'laboratorios:exemplo_arquivos' %}">Baixar ZIP de exemplo</a>
+  </section>
+
+  <section class="tab-pane autolab-lab-panel" id="arquivos-executar" role="tabpanel" aria-labelledby="arquivos-executar-tab" tabindex="0">
+    <h2 class="h4">Executar: conheça a entrada</h2>
+    <p>O exemplo contém seis arquivos fictícios: três documentos de texto, uma planilha CSV, uma imagem PNG e um arquivo sem extensão. Dois documentos têm o mesmo nome em pastas diferentes.</p>
+    <a class="btn btn-outline-primary mb-3" href="{% url 'laboratorios:exemplo_arquivos' %}">Baixar ZIP de exemplo</a>
+    <p>Na demonstração futura, você enviará um ZIP, visualizará as contagens e baixará os arquivos organizados com o inventário.</p>
+    <button class="btn btn-secondary" type="button" disabled>Organização no site em breve</button>
+    <p class="small text-muted mt-2">O formulário será disponibilizado junto das validações de upload. Nenhum arquivo é processado nesta página.</p>
+  </section>
+
+  <section class="tab-pane autolab-lab-panel" id="arquivos-codigo" role="tabpanel" aria-labelledby="arquivos-codigo-tab" tabindex="0">
+    <h2 class="h4">Código Python: identificar a categoria</h2>
+    <p>Este trecho classifica um nome de arquivo. Ele não extrai ZIPs nem grava arquivos; a organização completa precisa também de validação, tratamento de colisões e relatório.</p>
+    <pre class="bg-light border rounded p-3"><code>from pathlib import Path
+
+def categoria(nome):
+    # .lower() permite reconhecer também extensões como .JPG.
+    extensao = Path(nome).suffix.lower()
+    categorias = {
+        "Documentos": {".pdf", ".doc", ".docx", ".txt"},
+        "Planilhas": {".csv", ".xls", ".xlsx"},
+        "Imagens": {".png", ".jpg", ".jpeg"},
+    }
+    for grupo, extensoes in categorias.items():
+        if extensao in extensoes:
+            return grupo
+    # Inclui arquivos sem extensão.
+    return "Outros"
+
+print(categoria("clientes.csv"))  # Planilhas</code></pre>
+    <p>Pense no que acontece com <code>foto.JPG</code>, <code>LEIA-ME</code> e <code>pasta/comunicado.txt</code>.</p>
+  </section>
+
+  <section class="tab-pane autolab-lab-panel" id="arquivos-exercicio" role="tabpanel" aria-labelledby="arquivos-exercicio-tab" tabindex="0">
+    <h2 class="h4">Exercício guiado</h2>
+    <ol>
+      <li>Baixe o ZIP fictício e observe os nomes e as extensões.</li>
+      <li>Escreva qual categoria deve receber cada arquivo.</li>
+      <li>Teste mentalmente o trecho Python e compare as categorias.</li>
+      <li>Identifique quais nomes podem colidir ao remover as subpastas.</li>
+    </ol>
+    <p>O script-base e os testes locais serão publicados na entrega de exercícios. O Codespaces ainda não está preparado para esta atividade.</p>
+    <button class="btn btn-secondary" type="button" disabled>Exercício no Codespaces em breve</button>
+  </section>
+
+  <section class="tab-pane autolab-lab-panel" id="arquivos-desafio" role="tabpanel" aria-labelledby="arquivos-desafio-tab" tabindex="0">
+    <h2 class="h4">Desafio: preservar arquivos com nomes iguais</h2>
+    <p>Os arquivos <code>comunicado.txt</code> e <code>subpasta/comunicado.txt</code> devem ir para Documentos. Como manter os dois sem sobrescrever o primeiro?</p>
+    <ul>
+      <li>Classifique extensões sem diferenciar maiúsculas e minúsculas.</li>
+      <li>Resolva nomes repetidos com sufixos, como <code>comunicado_2.txt</code>.</li>
+      <li>Registre caminho original, nome de saída, categoria e status no inventário.</li>
+      <li>Verifique se os seis arquivos continuam presentes após a organização.</li>
+    </ul>
+    <p>Dica: contar apenas os nomes não basta; compare também o conteúdo dos dois documentos. A validação automatizada virá com os testes locais do exercício, sem executar código de participantes no servidor.</p>
+  </section>
+
+  <section class="tab-pane autolab-lab-panel" id="arquivos-resultado" role="tabpanel" aria-labelledby="arquivos-resultado-tab" tabindex="0">
+    <h2 class="h4">Resultado esperado</h2>
+    <p>Esta é uma referência didática, não o resultado de uma execução. Para o ZIP de exemplo, a organização deverá produzir:</p>
+    <pre class="bg-light border rounded p-3"><code>arquivos_organizados.zip
+├── Documentos/
+│   ├── comunicado.txt
+│   ├── comunicado_2.txt
+│   └── notas.txt
+├── Planilhas/clientes.csv
+├── Imagens/marca.png
+├── Outros/LEIA-ME
+└── relatorio.csv</code></pre>
+    <p>Total: <strong>6 arquivos</strong> · Documentos: 3 · Planilhas: 1 · Imagens: 1 · Outros: 1.</p>
+    <h3 class="h5">Critérios de conclusão</h3>
+    <ul>
+      <li>As contagens correspondem aos seis arquivos de entrada.</li>
+      <li>Os documentos com nomes iguais são preservados sem sobrescrita.</li>
+      <li>O relatório contém uma linha por arquivo e permite rastrear seu caminho original.</li>
+    </ul>
+    <p>Erros comuns: esquecer arquivos sem extensão, tratar <code>.JPG</code> como uma categoria diferente e perder um documento por colisão de nomes.</p>
+    <button class="btn btn-secondary" type="button" disabled>Download de resultado em breve</button>
+  </section>
+</div>
 {% endblock %}
