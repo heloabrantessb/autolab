@@ -549,7 +549,7 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 - [x] Objetivo, módulos, navegação e arquitetura definidos.
 - [x] Bootstrap 5 escolhido.
 - [x] Especificação técnica de Arquivos e contratos de MVP documentados.
-- [ ] Repositório Django criado.
+- [x] Repositório Django criado.
 - [ ] Layout e navegação implementados.
 - [ ] Laboratório de Arquivos implementado e testado.
 - [ ] Laboratório de Planilhas implementado e testado.
