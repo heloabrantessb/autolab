@@ -26,6 +26,9 @@ Preserve o caminho original no inventário.
 ## Estado da atividade
 
 A página didática, o download do exemplo e o recebimento inicial de um ZIP estão
-disponíveis. O envio confere apenas extensão e tamanho, sem inspecionar a
-estrutura ou organizar o conteúdo. Processamento, resultados e script-base
-Codespaces ficam nas próximas entregas. O site não executa código do participante.
+disponíveis. O envio inspeciona estrutura, caminhos, integridade e limites,
+sem extrair ou organizar o conteúdo. Use ZIP Stored ou Deflate sem senha;
+ZIP64, outros métodos de compressão e metadados de sistema (__MACOSX,
+.DS_Store e Thumbs.db) são recusados nesta versão. ZIPs aninhados não são
+abertos recursivamente. Processamento, resultados e script-base Codespaces
+ficam nas próximas entregas. O site não executa código do participante.
