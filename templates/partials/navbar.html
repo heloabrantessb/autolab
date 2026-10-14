@@ -1,0 +1,28 @@
+<header class="autolab-navbar py-2 px-3">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <!-- Botão de alternância para menu mobile -->
+      <button class="btn btn-outline-secondary d-lg-none p-1 px-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-label="Abrir menu de navegação">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+          <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+        </svg>
+      </button>
+
+      <!-- Marca e logo -->
+      <a class="autolab-brand" href="{% url 'core:home' %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="text-primary" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M8 1a2 2 0 0 1 2 2v2H6V3a2 2 0 0 1 2-2zm3 4V3a3 3 0 0 0-6 0v2a3 3 0 0 0-3 3v5a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3zM3 8a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/>
+        </svg>
+        <span>AutoLab</span>
+        <span class="badge-tag">Oficina</span>
+      </a>
+    </div>
+
+    <!-- Links rápidos à direita -->
+    <nav class="d-none d-md-flex align-items-center gap-3" aria-label="Navegação secundária">
+      <a href="{% url 'core:home' %}" class="nav-link text-secondary">Início</a>
+      <a href="{% url 'core:catalogo' %}" class="nav-link text-secondary">Laboratórios</a>
+      <a href="{% url 'exercicios:lista' %}" class="nav-link text-secondary">Exercícios</a>
+    </nav>
+  </div>
+</header>
