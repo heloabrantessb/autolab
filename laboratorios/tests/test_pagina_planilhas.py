@@ -22,7 +22,7 @@ class TestPaginaPlanilhas(SimpleTestCase):
         self.assertContains(response, "Não apague linhas parcialmente preenchidas")
         self.assertContains(response, "XLS e XLSM ficam fora deste corte")
         self.assertContains(response, "Processamento de planilhas em breve")
-        self.assertNotContains(response, '<input type="file"')
+        self.assertContains(response, '<input type="file"')
 
     def test_sample_matches_educational_counts_and_preserves_partial_records(self):
         response = self.client.get(reverse("laboratorios:exemplo_planilhas"), {"path": "../../.env"})
