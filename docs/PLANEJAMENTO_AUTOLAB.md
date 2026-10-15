@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 15/10/2026
-**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, fluxo web de Arquivos com limpeza e exercício de organização integrados em `dev` (até PR #12, `3585612`). Codespaces preparado no PR #13, em rascunho: testes locais e CI aprovados, validação hospedada pausada por decisão de evitar cobranças; nenhum Codespace criado. Página didática de Planilhas em implementação independente. Agendamento externo da limpeza necessário antes da oficina. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, fluxo web de Arquivos com limpeza e exercício de organização integrados em `dev` (até PR #12, `3585612`). Codespaces preparado no PR #13, em rascunho: testes locais e CI aprovados, validação hospedada pausada por decisão de evitar cobranças; nenhum Codespace criado. Página didática de Planilhas integrada pelo PR #14 (`f0eb5eb`); recebimento inicial CSV/XLSX implementado na `feat/upload-planilhas`, aguardando envio e CI remoto. Agendamento externo da limpeza necessário antes da oficina. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Enviar `feat/laboratorio-planilhas-pagina`, abrir PR para `dev`, confirmar CI e revisar. A branch parte de `dev` em `3585612`, sem depender do PR #13. Depois da integração, seguir com `feat/upload-planilhas`, `feat/leitura-csv-xlsx`, `feat/limpeza-dados`, `feat/exportacao-planilhas` e `feat/exercicio-planilhas`, uma entrega por vez. Depois seguem IA controlada e preparação para publicação.
+Enviar `feat/upload-planilhas`, abrir PR para `dev`, confirmar CI e revisar. A branch parte de `dev` em `f0eb5eb`, após integração do PR #14 com dois checks aprovados, sem depender do PR #13. Escopo: formulário, extensão CSV/XLSX, arquivo único, vazio e tamanho declarado/real; sem interpretação ou persistência de resultado. Depois da integração, seguir com `feat/leitura-csv-xlsx`, `feat/limpeza-dados`, `feat/exportacao-planilhas` e `feat/exercicio-planilhas`, uma entrega por vez. Depois seguem IA controlada e preparação para publicação.
 
 O PR #13 (`feat/codespaces-arquivos`) permanece em rascunho, sem merge: ambiente testado em contêiner local e CI aprovado, mas sem execução hospedada. Em 15/10/2026, o responsável determinou que não quer cobranças na conta. Não criar Codespaces nem contratar serviços com possibilidade de cobrança; retomar essa validação somente com nova orientação explícita. O percurso ativo usa o pacote de exercício e Python local. Essa restrição operacional não altera Django, Templates ou Bootstrap.
 
@@ -585,7 +585,8 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 15/10/2026 | Integrado | Exercício de organização integrado pelo PR #12 com dois checks aprovados; `dev` em `3585612` |
 | 15/10/2026 | Pausado | PR #13 de Codespaces em rascunho; contêiner local e CI aprovados, sem validação hospedada nem Codespace criado |
 | 15/10/2026 | Restrição confirmada | Responsável não quer cobranças; não criar Codespaces ou contratar serviços pagos. Percurso ativo com Python local e pacote baixável |
-| 15/10/2026 | Implementado na feature | Página didática de Planilhas, seis etapas e CSV fictício de oito linhas; processamento ainda indisponível |
+| 15/10/2026 | Integrado | Página didática de Planilhas e CSV fictício integrados pelo PR #14 com dois checks aprovados; `dev` em `f0eb5eb` |
+| 15/10/2026 | Implementado na feature | Formulário CSV/XLSX com recebimento inicial, extensão, limite de tamanho e arquivo único; leitura e processamento pendentes |
 | 14/10/2026 | Decisao tecnica | Primeiro perfil aceita Stored/Deflate; recusa ZIP64, criptografia, multiplos volumes, outros metodos e metadados de sistema; restricoes explicitas na UI e materiais |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
@@ -604,6 +605,8 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - Sem processamento de uploads, downloads, exercicios executaveis ou devcontainer nesta entrega. Sem push, merge ou publicacao.
 
 ### Changelog
+
+- **15/10/2026 — upload de Planilhas:** formulário e POST com conferência inicial de extensão, arquivo único, vazio e bytes declarados/reais. Feedback acessível na aba Executar, sem interpretar conteúdo ou persistir resultados. Página integrada pelo PR #14; leitura e limpeza continuam em entregas próprias.
 
 - **15/10/2026 — Planilhas e percurso local:** página didática e CSV fictício adicionados, sem processamento. Exercício de Arquivos integrado pelo PR #12. PR #13 de Codespaces mantido em rascunho, após recusa de possíveis cobranças; nenhum Codespace criado. Programação local é o percurso ativo, preservando a arquitetura aprovada.
 
@@ -642,7 +645,8 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [ ] Limpeza agendada e validada externamente antes da oficina.
 - [x] Fluxo web do Laboratório de Arquivos implementado, testado e integrado em `dev`.
 - [x] Exercício de organização com material e critérios locais integrado pelo PR #12.
-- [x] Página didática de Planilhas e CSV fictício implementados e testados na feature (envio e integração pendentes).
+- [x] Página didática de Planilhas e CSV fictício integrados pelo PR #14.
+- [x] Recebimento inicial CSV/XLSX implementado e testado na feature (envio e integração pendentes).
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Codespaces validado hospedado e integrado (PR #13 em rascunho, pausado por restrição de custos; contêiner local e CI já validados).
 - [ ] Laboratório de IA implementado e testado.
@@ -797,4 +801,16 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Cinco testes novos verificam estrutura, escopo, navegação, métodos, download fixo, material ausente e consistência da referência. Suítes Django e pytest: 127 testes passaram em cada uma.
 - Navegador: seis abas funcionaram, seta para a direita ativou Executar a partir de Aprender e CSV baixou. Desktop e viewport 390 × 844 conferidos; tabela com rolagem interna e sem transbordamento horizontal da página. Capturas locais `/tmp/autolab-planilhas-desktop.png` e `/tmp/autolab-planilhas-mobile.png`, fora do Git.
 - `manage.py check`: sem problemas; `makemigrations --check --dry-run`: sem alterações. Dependências compatíveis verificadas com `uv --cache-dir /tmp/autolab-uv-cache pip check --python .venv/bin/python` (venv local não inclui pip). `git diff --check` passou; CSV baixado idêntico ao versionado por comparação de bytes. Servidor de teste encerrado.
-- CI remoto e integração aguardam push manual. Próxima entrega: `feat/upload-planilhas` após integração desta página.
+- Atualização: página integrada pelo PR #14 com os dois checks aprovados; `dev` em `f0eb5eb`. A pendência de envio foi resolvida.
+
+
+### Evidências do recebimento de Planilhas
+
+- Branch `feat/upload-planilhas`, base `dev` em `f0eb5eb`, destino do PR `dev`; depende da página integrada pelo PR #14. Sem dependência do PR #13 pausado.
+- Formulário em `/laboratorios/planilhas/` envia um arquivo a `/laboratorios/planilhas/receber/` (somente POST, com CSRF). CSV/XLSX aceitos pela extensão sem distinguir maiúsculas; MIME fornecido pelo cliente não é prova de conteúdo. XLS, XLSM e demais extensões recusados.
+- Limite configurável `MAX_SPREADSHEET_UPLOAD_BYTES` (20 MiB padrão). Confere tamanho declarado e bytes reais em blocos, rebobina a entrada, rejeita vazio e arquivos múltiplos inclusive em outro campo. Limites de linhas/colunas só serão aplicados pela futura leitura.
+- Sucesso HTTP 200 e erro HTTP 400 permanecem em Executar; resposta sem cache. Texto explicita que o conteúdo não foi interpretado nem salvo como resultado. Não usa nome do cliente como caminho, não expõe conteúdo e não cria metadados. Django pode usar upload temporário durante a requisição, sem guardar entrada para uso posterior.
+- Onze testes novos de formulário/endpoint verificam limites exatos, tamanho declarado falso, vazio real, extensões, arquivo único, métodos, CSRF, cache e ausência de persistência. Teste da página atualizado para esperar o formulário.
+- Testes Django e pytest: 138 passaram em cada suíte. Navegador confirmou CSV fictício recebido e extensão inválida rejeitada; aba ativa e mensagens conferidas. Viewport 390 × 844 sem transbordamento horizontal; capturas locais `/tmp/autolab-upload-planilhas-desktop.png` e `/tmp/autolab-upload-planilhas-mobile.png` fora do Git.
+- `manage.py check` sem problemas; `makemigrations --check --dry-run` sem alterações; `git diff --check` aprovado. Servidor de teste isolado encerrado.
+- Catálogo mantém automação em breve; leitura CSV/XLSX, verificação estrutural, limpeza, prévia real e exportação ainda não estão disponíveis. Próxima entrega: `feat/leitura-csv-xlsx` após integração. CI remoto aguarda push manual.

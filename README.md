@@ -164,9 +164,14 @@ etapas e o download do [CSV fictício](materials/planilhas/README.md). O exemplo
 contém duplicatas, espaços e uma linha vazia; a referência preserva registros
 parcialmente preenchidos e identificadores com zeros iniciais.
 
-Upload, leitura CSV/XLSX, limpeza e exportação ainda serão entregues em branches
-próprias. A tabela de referência não representa uma execução no site, e a
-automação continua indisponível no catálogo.
+O formulário já confere recebimento de um único CSV/XLSX não vazio, de até
+20 MiB por padrão (`MAX_SPREADSHEET_UPLOAD_BYTES`). Extensão e tamanho são
+conferidos; o conteúdo ainda não é interpretado. O envio não fica salvo como
+resultado.
+
+Leitura CSV/XLSX, limpeza e exportação serão entregues em branches próprias.
+A tabela de referência não representa uma execução no site, e a automação
+continua indisponível no catálogo.
 
 ## 📐 Padrões de Contribuição
 
