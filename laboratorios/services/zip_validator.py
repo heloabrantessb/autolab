@@ -1,4 +1,4 @@
-"""Inspeção limitada de ZIP Stored/Deflate, sem extração ou escrita.
+"""Inspeção ZIP sem escrita e cópia limitada para destinos controlados.
 
 Estruturas ZIP: https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT
 """
@@ -71,7 +71,7 @@ def _diretorio_central(entrada, limites):
     return offset
 
 
-def _caminho(info):
+def normalizar_caminho_zip(info):
     nome = info.orig_filename.replace("\\", "/")
     if not nome or nome.startswith("/") or ntpath.splitdrive(nome)[0]:
         raise ArquivoInvalido("O ZIP contém um caminho absoluto ou inválido.")
@@ -88,7 +88,7 @@ def _caminho(info):
     return unicodedata.normalize("NFC", "/".join(partes))
 
 
-def _ler_entrada(entrada, archive, info, limite_total, limite_entrada, offset_central):
+def _ler_entrada(entrada, archive, info, limite_total, limite_entrada, offset_central, destino=None):
     # ZipFile.open confere cabeçalho local, nome e sobreposição de entradas.
     # Não lemos pelo ZipExtFile: ele pode truncar saída pelo tamanho declarado.
     with archive.open(info):
@@ -136,11 +136,29 @@ def _ler_entrada(entrada, archive, info, limite_total, limite_entrada, offset_ce
         if total > limite_entrada or total > limite_total:
             raise LimiteExcedido("O conteúdo descompactado excede os limites permitidos.")
         crc = zlib.crc32(saida, crc)
+        if destino is not None and destino.write(saida) != len(saida):
+            raise OSError("Não foi possível gravar todo o conteúdo da entrada.")
     if descompressor and not descompressor.eof:
         raise ArquivoInvalido("Uma entrada comprimida está corrompida ou incompleta.")
     if total != info.file_size or (crc & 0xffffffff) != info.CRC:
         raise ArquivoInvalido("O tamanho ou a integridade de uma entrada está incorreto.")
     return total
+
+
+def copiar_entrada_zip(entrada, archive, info, destino, limites, total_anterior=0):
+    """Copia após inspeção completa, repetindo limites reais e integridade.
+
+    O chamador deve descartar toda a saída se esta operação falhar.
+    """
+    offset = _diretorio_central(entrada, limites)
+    try:
+        return _ler_entrada(
+            entrada, archive, info, limites.descompactado_bytes - total_anterior,
+            limites.entrada_bytes, offset, destino=destino,
+        )
+    except (zipfile.BadZipFile, EOFError, ValueError, RuntimeError,
+            NotImplementedError, zlib.error, struct.error) as exc:
+        raise ArquivoInvalido("Não foi possível copiar uma entrada íntegra do ZIP.") from exc
 
 
 def inspecionar_zip(entrada, limites: LimitesZIP) -> InspecaoZIP:
@@ -154,7 +172,7 @@ def inspecionar_zip(entrada, limites: LimitesZIP) -> InspecaoZIP:
             for info in infos:
                 if info.volume:
                     raise ArquivoInvalido("ZIP dividido em vários volumes não é permitido.")
-                caminho = _caminho(info)
+                caminho = normalizar_caminho_zip(info)
                 chave = caminho.casefold()
                 if chave in vistos:
                     raise ArquivoInvalido("O ZIP contém caminhos repetidos ou ambíguos.")
