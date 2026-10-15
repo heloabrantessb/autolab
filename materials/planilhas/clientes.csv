@@ -1,0 +1,9 @@
+id,nome,email,setor,observacao
+001,Ana Exemplo,ana@example.invalid,Financeiro,
+001,Ana Exemplo,ana@example.invalid,Financeiro,
+002, Bruno Exemplo ,bruno@example.invalid, TI ,Atendimento
+003,Carla Exemplo,,Acadêmico,Cadastro incompleto
+,,,,
+004,Diego Exemplo,diego@example.invalid,TI,
+002,Bruno Exemplo,bruno@example.invalid,TI,Atendimento
+005,Elisa Exemplo,elisa@example.invalid,Financeiro,Ação de exemplo

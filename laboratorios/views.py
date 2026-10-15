@@ -15,7 +15,7 @@ from .services.resultados import caminho_resultado, criar_resultado
 from .services.zip_validator import ArquivoInvalido
 
 
-ETAPAS_ARQUIVOS = (
+ETAPAS_LABORATORIO = (
     ("aprender", "Aprender"), ("executar", "Executar"),
     ("codigo", "Código Python"), ("exercicio", "Exercício"),
     ("desafio", "Desafio"), ("resultado", "Resultado"),
@@ -26,7 +26,7 @@ ETAPAS_ARQUIVOS = (
 def arquivos(request):
     """Laboratorio de Arquivos e Pastas."""
     return render(request, "laboratorios/arquivos.html", {
-        "etapas": ETAPAS_ARQUIVOS,
+        "etapas": ETAPAS_LABORATORIO,
         "etapa_ativa": "aprender",
         "form": UploadZIPForm(),
     })
@@ -51,7 +51,7 @@ def organizar_arquivos(request):
                 "Location": reverse("laboratorios:resultado", kwargs={"token": resultado.token}),
             })
     return render(request, "laboratorios/arquivos.html", {
-        "etapas": ETAPAS_ARQUIVOS,
+        "etapas": ETAPAS_LABORATORIO,
         "etapa_ativa": "executar",
         "form": form,
     }, status=status)
@@ -80,7 +80,7 @@ def resultado(request, token):
     except OSError:
         return _indisponivel(request)
     response = render(request, "laboratorios/arquivos.html", {
-        "etapas": ETAPAS_ARQUIVOS, "etapa_ativa": "resultado",
+        "etapas": ETAPAS_LABORATORIO, "etapa_ativa": "resultado",
         "form": UploadZIPForm(), "resultado": registro,
     })
     response["Referrer-Policy"] = "no-referrer"
@@ -118,4 +118,26 @@ def exemplo_arquivos(request):
     return FileResponse(
         arquivo, as_attachment=True, filename="autolab-arquivos-exemplo.zip",
         content_type="application/zip",
+    )
+
+
+@require_safe
+def planilhas(request):
+    """Conteúdo didático de Planilhas; processamento em entrega própria."""
+    return render(request, "laboratorios/planilhas.html", {
+        "etapas": ETAPAS_LABORATORIO, "etapa_ativa": "aprender",
+        "limite_mib": settings.MAX_SPREADSHEET_UPLOAD_BYTES / (1024 * 1024),
+    })
+
+
+@require_safe
+def exemplo_planilhas(request):
+    caminho = settings.BASE_DIR / "materials/planilhas/clientes.csv"
+    try:
+        arquivo = caminho.open("rb")
+    except FileNotFoundError as exc:
+        raise Http404("Material de exemplo não encontrado.") from exc
+    return FileResponse(
+        arquivo, as_attachment=True, filename="autolab-clientes-exemplo.csv",
+        content_type="text/csv; charset=utf-8",
     )

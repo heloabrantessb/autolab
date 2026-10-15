@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Laboratório de Planilhas — AutoLab{% endblock %}
+{% block content %}
+<header class="mb-4">
+  <h1 class="h3 fw-bold">Laboratório de Planilhas</h1>
+  <p class="lead">Aprenda a limpar uma tabela sem perder registros parcialmente preenchidos.</p>
+  <p class="small text-muted">Nível: iniciante · Pré-requisitos: linhas, colunas e funções Python · Duração sugerida: 25 minutos.</p>
+  <div class="alert alert-info" role="status">Conteúdo didático e CSV fictício disponíveis. O processamento de planilhas ainda está em preparação.</div>
+</header>
+{% include "partials/lab_tabs.html" with etapas=etapas prefix="planilhas" etapa_ativa=etapa_ativa only %}
+<noscript>
+  <style>.autolab-lab-panel.tab-pane { display: block; opacity: 1; margin-bottom: 2rem; }</style>
+  <p>As seis etapas estão disponíveis abaixo. Use os links para ir até cada seção.</p>
+</noscript>
+<div class="tab-content">
+  <section class="tab-pane autolab-lab-panel active" id="planilhas-aprender" role="tabpanel" aria-labelledby="planilhas-aprender-tab" tabindex="0">
+    <h2 class="h4">Aprender: limpar sem perder informação</h2>
+    <p>Uma equipe recebeu uma tabela de clientes fictícios com espaços extras, registros repetidos e campos vazios. Antes de automatizar, defina o que deve mudar e o que precisa ser preservado.</p>
+    <ul>
+      <li><strong>Aparar espaços:</strong> remover espaços nas pontas das células de texto.</li>
+      <li><strong>Remover linhas vazias:</strong> eliminar somente linhas em que todas as células estão vazias.</li>
+      <li><strong>Remover duplicatas:</strong> manter uma ocorrência de cada linha completa repetida.</li>
+    </ul>
+    <p>Um registro sem e-mail continua sendo um registro. Não apague linhas parcialmente preenchidas automaticamente. Preserve identificadores como <code>001</code> como texto.</p>
+    <p>CSV é um arquivo de texto com linhas e colunas; XLSX é uma pasta de trabalho Excel. Na primeira versão serão aceitos CSV UTF-8 e XLSX; XLS e XLSM ficam fora deste corte. Macros não serão executadas.</p>
+    <a class="btn btn-outline-primary" href="{% url 'laboratorios:exemplo_planilhas' %}">Baixar CSV fictício</a>
+  </section>
+  <section class="tab-pane autolab-lab-panel" id="planilhas-executar" role="tabpanel" aria-labelledby="planilhas-executar-tab" tabindex="0">
+    <h2 class="h4">Executar: conheça a entrada</h2>
+    <p>O CSV tem oito linhas de dados e cinco colunas. Inclui uma duplicata exata, uma linha completamente vazia e duas versões de Bruno que ficam iguais depois de aparar os espaços.</p>
+    <p>Carla não tem e-mail; sua linha deve permanecer. Nomes e contatos são fictícios; os endereços usam <code>example.invalid</code>.</p>
+    <a class="btn btn-outline-primary mb-3" href="{% url 'laboratorios:exemplo_planilhas' %}">Baixar CSV fictício</a>
+    <p>O fluxo previsto terá opções de limpeza, prévia e exportação. Limites previstos: {{ limite_mib|floatformat:"-1" }} MiB, 10 mil linhas e 30 colunas. O formulário e suas validações ainda não estão disponíveis.</p>
+    <button class="btn btn-secondary" type="button" disabled>Processamento de planilhas em breve</button>
+    <p class="small text-muted mt-2">Use apenas dados fictícios na oficina. Uma extensão de arquivo não comprova seu conteúdo.</p>
+  </section>
+  <section class="tab-pane autolab-lab-panel" id="planilhas-codigo" role="tabpanel" aria-labelledby="planilhas-codigo-tab" tabindex="0">
+    <h2 class="h4">Código Python: observar o CSV</h2>
+    <p>Este trecho lê a estrutura do exemplo com a biblioteca padrão. Ele não faz a limpeza nem gera uma saída.</p>
+    <pre class="bg-light border rounded p-3"><code>import csv
+
+with open("clientes.csv", encoding="utf-8-sig", newline="") as arquivo:
+    leitor = csv.DictReader(arquivo)
+    print(leitor.fieldnames)
+    for linha in leitor:
+        print(linha["id"], linha["nome"])</code></pre>
+    <p>Pense na diferença entre uma célula vazia e uma linha vazia. Por que converter um identificador para número pode perder os zeros iniciais?</p>
+  </section>
+  <section class="tab-pane autolab-lab-panel" id="planilhas-exercicio" role="tabpanel" aria-labelledby="planilhas-exercicio-tab" tabindex="0">
+    <h2 class="h4">Exercício guiado</h2>
+    <ol>
+      <li>Baixe o CSV e identifique as cinco colunas e as oito linhas de dados.</li>
+      <li>Marque a linha completamente vazia e as linhas com somente alguns campos vazios.</li>
+      <li>Compare as duas versões de Bruno antes e depois de aparar espaços.</li>
+      <li>Explique a ordem: aparar espaços, remover linhas vazias e remover duplicatas.</li>
+      <li>Confira quais cinco identificadores devem permanecer.</li>
+    </ol>
+    <p>O script-base e os testes locais de Planilhas serão preparados em uma entrega própria. A atividade de Arquivos já pode ser praticada com Python local.</p>
+    <a class="btn btn-outline-primary" href="{% url 'exercicios:detalhe' 'organizacao-arquivos' %}">Conhecer o exercício de Arquivos</a>
+  </section>
+  <section class="tab-pane autolab-lab-panel" id="planilhas-desafio" role="tabpanel" aria-labelledby="planilhas-desafio-tab" tabindex="0">
+    <h2 class="h4">Desafio: uma célula vazia não é uma linha vazia</h2>
+    <p>O que aconteceria se você removesse qualquer linha que tivesse um campo vazio? Compare essa regra com remover apenas as linhas completamente vazias.</p>
+    <p>Explique por que Carla permanece no resultado e por que a ordem das operações altera a detecção de duplicatas. Conte registros e confira o conteúdo; uma contagem correta sozinha não prova que a limpeza preservou as pessoas certas.</p>
+  </section>
+  <section class="tab-pane autolab-lab-panel" id="planilhas-resultado" role="tabpanel" aria-labelledby="planilhas-resultado-tab" tabindex="0">
+    <h2 class="h4">Resultado esperado — referência didática</h2>
+    <p>Esta tabela é uma referência do material fictício, não o resultado de uma execução no site. Com as três operações aplicadas nessa ordem, oito linhas de dados passam a cinco: uma linha vazia e duas duplicatas são removidas.</p>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <caption>Referência após aparar espaços, remover linhas vazias e remover duplicatas. Células sem valor continuam vazias.</caption>
+        <thead><tr><th scope="col">id</th><th scope="col">nome</th><th scope="col">email</th><th scope="col">setor</th><th scope="col">observacao</th></tr></thead>
+        <tbody>
+          <tr><td>001</td><td>Ana Exemplo</td><td>ana@example.invalid</td><td>Financeiro</td><td></td></tr>
+          <tr><td>002</td><td>Bruno Exemplo</td><td>bruno@example.invalid</td><td>TI</td><td>Atendimento</td></tr>
+          <tr><td>003</td><td>Carla Exemplo</td><td></td><td>Acadêmico</td><td>Cadastro incompleto</td></tr>
+          <tr><td>004</td><td>Diego Exemplo</td><td>diego@example.invalid</td><td>TI</td><td></td></tr>
+          <tr><td>005</td><td>Elisa Exemplo</td><td>elisa@example.invalid</td><td>Financeiro</td><td>Ação de exemplo</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 class="h5">Critérios de conclusão</h3>
+    <ul>
+      <li>Os identificadores 001 a 005 permanecem como texto, sem duplicatas completas.</li>
+      <li>Carla permanece, mesmo sem e-mail.</li>
+      <li>A saída mantém as cinco colunas e seus nomes.</li>
+      <li>Dados de exemplo e arquivos de entrada são preservados.</li>
+    </ul>
+    <p>A prévia de dados enviados e o download de resultados serão disponibilizados nas próximas entregas.</p>
+  </section>
+</div>
+{% endblock %}
