@@ -17,7 +17,7 @@ LABORATORIOS = (
         "nivel": "Iniciante",
         "mvp": True,
         "disponivel": False,
-        "rota": None,
+        "rota": "laboratorios:planilhas",
     },
     {
         "slug": "ia",
