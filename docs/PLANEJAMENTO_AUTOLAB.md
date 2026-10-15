@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 15/10/2026
-**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo e fluxo web de Arquivos até download/expiração integrados em `dev`. Limpeza de expirados e disponibilidade de Arquivos no catálogo implementadas na `feat/limpeza-resultados`, aguardando envio e revisão. Exercícios e Codespaces ainda pendentes; agendamento externo da limpeza necessário antes da oficina. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo e fluxo web de Arquivos com limpeza integrados em `dev`. Exercício de organização com script-base, testes locais e pacote para download implementado na `feat/exercicio-organizacao`, aguardando envio e revisão. Codespaces ainda pendente; agendamento externo da limpeza necessário antes da oficina. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Enviar `feat/limpeza-resultados`, abrir PR para `dev`, confirmar o CI e revisar. Após integração, iniciar `feat/exercicio-organizacao`: script-base Python com TODOs, materiais fictícios, instruções, desafio e testes locais, sem executar código de participantes no servidor. Depois seguem Codespaces, Planilhas, IA controlada e preparação para publicação. A autorização de 15/10/2026 permite seguir essas etapas sem nova aprovação a cada branch, parando quando houver decisão pendente ou ação externa necessária. Push manual permanece a cargo do responsável. Download integrado pelo PR #10. Agendamento externo da limpeza precisa ser configurado e validado antes da oficina, conforme `docs/OPERACAO_RESULTADOS.md`.
+Enviar `feat/exercicio-organizacao`, abrir PR para `dev`, confirmar o CI e revisar. Após integração, iniciar `feat/codespaces-arquivos`: devcontainer, preparação de dependências, instruções e links reais para abrir o repositório. Validar o ambiente disponível localmente e solicitar validação externa de Codespaces quando necessária, sem confundir testes locais com execução hospedada. Depois seguem Planilhas, IA controlada e preparação para publicação. A autorização de 15/10/2026 permite seguir essas etapas sem nova aprovação a cada branch, parando quando houver decisão pendente ou ação externa necessária. Push manual permanece a cargo do responsável. Limpeza integrada pelo PR #11. Agendamento externo da limpeza precisa ser configurado e validado antes da oficina, conforme `docs/OPERACAO_RESULTADOS.md`.
 
 ---
 
@@ -332,6 +332,8 @@ plataforma-autolab/
 
 `solution_reference.py` deve ser mantido fora do caminho principal de apresentação dos desafios ou entregue apenas quando desejado pelo instrutor. Não incluir arquivos reais sensíveis. `materials` pode ser servido como arquivos estáticos públicos somente quando fictícios e inofensivos. Os diretórios de uploads e resultados não ficam sob `static/` nem sob uma pasta pública de media sem proteção.
 
+**Implementação do primeiro exercício:** `codespaces_exercises/arquivos` contém `starter.py`, `apoio.py`, `README.md`, `tests/verificar.py` e `referencia.py`. O último corresponde à referência sugerida acima e fica fora do pacote do participante e da navegação didática principal. O pacote baixável adiciona o ZIP fictício original; no clone, o apoio encontra esse mesmo ZIP em `materials/arquivos`, sem duplicar o binário no Git.
+
 ## 19. Rotas e contrato HTTP detalhado
 
 | Método | Rota | Nome sugerido | Resposta |
@@ -346,6 +348,7 @@ plataforma-autolab/
 | POST | `/laboratorios/ia/classificar/` | `laboratorios:classificar_ia` | HTML 200/303, 400/429/503 conforme erro |
 | GET | `/exercicios/` | `exercicios:lista` | HTML 200 |
 | GET | `/exercicios/<slug:slug>/` | `exercicios:detalhe` | HTML 200/404 |
+| GET | `/exercicios/organizacao-arquivos/materiais/` | `exercicios:materiais_arquivos` | ZIP público 200/404, GET/HEAD |
 | GET | `/resultados/<uuid:token>/download/` | `laboratorios:download_resultado` | FileResponse 200, 404/410 se inválido/expirado |
 | GET | `/resultados/<uuid:token>/` | `laboratorios:resultado` | Resumo HTML 200, 404/410 se ausente/expirado |
 
@@ -426,6 +429,8 @@ Implementar interface `classificar_solicitacoes(itens: list[str]) -> list[Classi
 ## 23. GitHub Codespaces — contrato de preparação
 
 Manter `.devcontainer/devcontainer.json` com Python e extensões úteis (Python, Pylance), `postCreateCommand` para instalar dependências e `forwardPorts` apenas se necessário. Repositório deve ter `README.md` com requisitos de conta GitHub, como abrir Codespaces, iniciar terminal, executar `python --version`, instalar dependências se necessário e rodar `pytest`. Separar arquivos `starter.py` com `TODO`s, `README.md` de cada exercício, dados fictícios e testes locais. Não colocar chave de IA, `.env`, tokens ou dados reais no Git. Fornecer URL de Codespaces apenas quando nome do repositório for conhecido; nunca inventar URL. Não depender de Codespaces para funcionamento dos botões de demonstração do site. Preparar plano B: scripts `.py` e materiais para download, executáveis localmente por quem já tenha Python.
+
+**Exercício de Arquivos implementado antes do devcontainer:** três TODOs para classificação, nomes únicos e linha de inventário. `python tests/verificar.py` executa seis critérios locais em `unittest`, somente com stdlib. O starter intencionalmente incompleto falha até o participante resolver as funções. O apoio aceita exclusivamente o ZIP fictício versionado, validando tamanho e SHA-256 antes de abrir; não substitui o serviço de uploads do site nem aceita ZIP arbitrário. A saída usa criação exclusiva e falhas descartam somente a saída recém-criada. Geração de ZIP/CSV fica no apoio para concentrar o exercício inicial nas três regras de negócio. A referência do instrutor passa os mesmos critérios e não entra no pacote público baixável. Nenhum código é enviado ou executado no servidor e não há progresso persistente. A duração de 25 minutos é uma estimativa a validar na oficina.
 
 ## 24. Configuração e dependências
 
@@ -570,6 +575,8 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 15/10/2026 | Implementado na feature | Resumo e download temporário com token, POST/Redirect/GET e expiração; limpeza ainda em entrega própria |
 | 15/10/2026 | Integrado | Download integrado pelo PR #10 com dois checks aprovados; `dev` sincronizada em `52378b3` |
 | 15/10/2026 | Implementado na feature | Comando de limpeza de expirados com simulação, lotes e recuperação de falhas; Arquivos disponível no catálogo; agendamento externo pendente |
+| 15/10/2026 | Integrado | Limpeza e acesso a Arquivos integrados pelo PR #11 com dois checks aprovados; `dev` sincronizada em `bc40c5c` |
+| 15/10/2026 | Implementado na feature | Exercício guiado com três TODOs, seis critérios locais e pacote público sem referência do instrutor; Codespaces pendente |
 | 14/10/2026 | Decisao tecnica | Primeiro perfil aceita Stored/Deflate; recusa ZIP64, criptografia, multiplos volumes, outros metodos e metadados de sistema; restricoes explicitas na UI e materiais |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
@@ -589,6 +596,7 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 
 ### Changelog
 
+- **15/10/2026 — exercício de Arquivos:** script-base, apoio restrito ao ZIP fictício, critérios locais e referência do instrutor. Lista/detalhe e download de pacote autocontido adicionados; links no laboratório e textos da home alinhados. Limpeza integrada pelo PR #11; devcontainer em entrega própria.
 - **15/10/2026 — limpeza de resultados:** comando de remoção restrita de expirados com modo de simulação, revalidação e testes de falhas. Fluxo de Arquivos habilitado no catálogo/home; operação e exemplo de agendamento documentados, sem instalar cron. Download integrado pelo PR #10.
 - **15/10/2026 — download de resultados:** view conectada à organização, metadados temporários com migração, resumo após redirecionamento e download com validação de token/caminho/prazo. Upload descartado ao concluir; limpeza periódica pendente. Organização integrada pelo PR #9.
 - **15/10/2026 — organização de arquivos:** serviço Python independente de Django gera categorias, inventário e ZIP em diretório exclusivo. Cópia limitada reutiliza o leitor da validação; erros eliminam a saída parcial. Validação integrada pelo PR #8; fluxo web de resultados permanece pendente.
@@ -619,9 +627,10 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [x] Inspeção ZIP implementada, testada e integrada em `dev` pelo PR #8.
 - [x] Serviço de organização e inventário implementado, testado e integrado pelo PR #9.
 - [x] Resumo, download por token e bloqueio por expiração integrados pelo PR #10.
-- [x] Comando de limpeza implementado e testado na feature (envio e integração pendentes).
+- [x] Comando de limpeza implementado, testado e integrado pelo PR #11.
 - [ ] Limpeza agendada e validada externamente antes da oficina.
-- [x] Fluxo web do Laboratório de Arquivos implementado e testado; última entrega de limpeza ainda aguarda integração.
+- [x] Fluxo web do Laboratório de Arquivos implementado, testado e integrado em `dev`.
+- [x] Exercício de organização com material e critérios locais implementado e testado na feature (envio e integração pendentes).
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Devcontainer Codespaces validado.
 - [ ] Laboratório de IA implementado e testado.
@@ -753,3 +762,15 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Demonstração em banco e arquivos temporários isolados: dois resultados gerados com o material fictício; um expirado. Simulação retornou `Elegíveis: 1` e preservou ambos; execução retornou `Removidos: 1` preservando bytes do válido; repetição retornou `Removidos: 0`.
 - Navegador local: catálogo mostrou Arquivos disponível, cinco módulos em breve e acesso ao laboratório funcionando. Captura `/tmp/autolab-catalogo-arquivos-disponivel.png`, fora do Git. Servidor de teste encerrado após verificação.
 - `docs/OPERACAO_RESULTADOS.md` descreve retenção, falhas, áreas sem registro e exemplo de cron com exclusão mútua. Nenhum agendador foi configurado; ativação e verificação dependem do ambiente da oficina/publicação. CI remoto desta branch aguarda push manual.
+- Atualização: limpeza integrada pelo PR #11 com dois checks aprovados; base sincronizada em `bc40c5c`. A pendência de envio acima é histórica.
+
+### Evidências do exercício de organização
+
+- Branch: `feat/exercicio-organizacao`; base: `dev`, commit `bc40c5c`. PR previsto para `dev`; depende do fluxo de Arquivos integrado. Escopo: exercício e distribuição de materiais, sem devcontainer ou execução de código no servidor.
+- Contratos e três TODOs em `starter.py`; apoio gera ZIP e CSV usando apenas material fictício de hash conhecido. Referência do instrutor em arquivo separado, excluída do pacote e do percurso principal. Saídas locais `resultado*.zip` ignoradas no Git nessa pasta.
+- Lista em `/exercicios/`, detalhe no slug `organizacao-arquivos` e pacote público GET/HEAD de cinco arquivos fixos: README, starter, apoio, critérios e exemplo ZIP. Slug desconhecido e material ausente retornam 404; POST recusado. Parâmetros do cliente não selecionam arquivos ou a referência.
+- `.venv/bin/python manage.py check`: sem problemas; testes Django e pytest: 122 passaram em cada suíte; `makemigrations --check --dry-run`: nenhuma mudança; `git diff --check`: sem problemas.
+- `.venv/bin/python codespaces_exercises/arquivos/tests/verificar.py --referencia`: seis critérios passaram. O nome `verificar.py` evita coletar os TODOs incompletos como falhas de produto; a suíte do site verifica explicitamente o comportamento pedagógico esperado e a referência.
+- Dez testes novos do site cobrem páginas, métodos, conteúdo exato do pacote, exclusão da referência, material ausente, execução sem site-packages, erro esperado do starter, material adulterado, saídas inválidas e descarte de saída parcial. Pacote descompactado em área temporária foi testado primeiro com TODOs pendentes e depois com a referência no lugar do starter: seis critérios passaram e a CLI produziu ZIP íntegro com total seis, sem instalar bibliotecas.
+- Navegador local: lista abriu o detalhe e botão baixou o pacote; ZIP baixado conferido com os cinco arquivos, hash do exemplo preservado e sem referência. Detalhe conferido em desktop e mobile 390 × 844, sem rolagem horizontal no tamanho testado. Capturas `/tmp/autolab-exercicio-desktop.png` e `/tmp/autolab-exercicio-mobile.png`, fora do Git; servidor de teste encerrado.
+- Scripts rodam com Python 3.12+ sem Django ou pip. Exercícios de Planilhas/IA e Codespaces permanecem em preparação. CI remoto desta branch aguarda push manual; validação do devcontainer hospedado ficará na próxima entrega.

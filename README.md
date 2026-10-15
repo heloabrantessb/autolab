@@ -133,6 +133,27 @@ ou ativado automaticamente.
 
 ---
 
+## Exercício Python de Arquivos
+
+O [exercício de Arquivos](codespaces_exercises/arquivos/README.md) pode ser
+executado com Python 3.12+, sem dependências do site. Acesse `/exercicios/`
+para baixar o pacote do participante ou, no clone do repositório:
+
+```bash
+cd codespaces_exercises/arquivos
+python tests/verificar.py
+python starter.py --saida resultado.zip
+```
+
+Os testes do exercício falham inicialmente até resolver os três TODOs.
+Eles verificam o código local; o site não executa soluções dos participantes.
+Codespaces ainda será configurado em sua entrega própria.
+
+Para o instrutor, `python tests/verificar.py --referencia` verifica a solução
+de referência no repositório completo. Ela não é incluída no pacote baixado.
+O CI do site verifica tanto as falhas esperadas do starter quanto a aprovação
+da referência e o funcionamento do pacote completado, sem dependências externas.
+
 ## 📐 Padrões de Contribuição
 
 O workflow [Testes Django](.github/workflows/tests.yml) executa em pushes para
