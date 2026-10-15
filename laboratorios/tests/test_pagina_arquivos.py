@@ -30,7 +30,7 @@ class TestPaginaArquivos(SimpleTestCase):
         response = self.client.get(reverse("laboratorios:arquivos"))
         self.assertContains(response, "Envie um ZIP para organizar os arquivos")
         self.assertContains(response, "Esta é uma referência didática, não o resultado de uma execução.")
-        self.assertContains(response, "Exercício no Codespaces em breve")
+        self.assertContains(response, "Preparar Codespace no GitHub")
         self.assertContains(response, '<input type="file"')
         self.assertContains(response, "comunicado_2.txt")
         self.assertContains(response, "relatorio.csv")
