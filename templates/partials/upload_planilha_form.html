@@ -1,0 +1,21 @@
+{% if recebido %}
+  <div class="alert alert-info" role="status">
+    Arquivo recebido para conferência inicial de extensão e tamanho.
+    O conteúdo não foi interpretado e o envio não foi salvo como resultado.
+    Leitura, limpeza e exportação ainda estão em preparação. Envie novamente quando essas etapas estiverem disponíveis.
+  </div>
+{% endif %}
+{% if form.errors %}
+  <div class="alert alert-danger" role="alert">Não foi possível receber a planilha. Confira os erros abaixo e selecione o arquivo novamente.</div>
+{% endif %}
+<form action="{% url 'laboratorios:receber_planilha' %}" method="post" enctype="multipart/form-data" class="mb-4">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <div class="mb-3">
+    <label for="{{ form.arquivo_planilha.id_for_label }}" class="form-label">{{ form.arquivo_planilha.label }}</label>
+    {{ form.arquivo_planilha }}
+    <div class="form-text" id="{{ form.arquivo_planilha.id_for_label }}_helptext">{{ form.arquivo_planilha.help_text }}</div>
+    <div class="text-danger">{{ form.arquivo_planilha.errors }}</div>
+  </div>
+  <button class="btn btn-primary" type="submit">Enviar para conferir tamanho</button>
+</form>

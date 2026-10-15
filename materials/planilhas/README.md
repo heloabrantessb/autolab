@@ -28,6 +28,7 @@ sem e-mail; nenhum registro parcialmente preenchido é removido por esse motivo.
 As cinco colunas e os zeros iniciais dos identificadores devem ser preservados.
 
 A tabela exibida no laboratório é uma referência fixa, não um processamento
-feito pelo site. Esta entrega oferece conteúdo didático e download do CSV;
-formulário, leitura CSV/XLSX, limpeza e exportação virão em branches próprias.
+feito pelo site. O laboratório oferece conteúdo didático, download do CSV e conferência inicial
+de recebimento (extensão e tamanho). Leitura CSV/XLSX, limpeza e exportação
+virão em branches próprias; enviar o arquivo ainda não interpreta seu conteúdo.
 Não sobrescreva o material de entrada ao implementar a automação.
