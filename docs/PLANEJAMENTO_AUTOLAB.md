@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 15/10/2026
-**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo e fluxo web de Arquivos com limpeza integrados em `dev`. Exercício de organização com script-base, testes locais e pacote para download implementado na `feat/exercicio-organizacao`, aguardando envio e revisão. Codespaces ainda pendente; agendamento externo da limpeza necessário antes da oficina. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, fluxo web de Arquivos com limpeza e exercício de organização integrados em `dev` (até PR #12, `3585612`). Codespaces preparado no PR #13, em rascunho: testes locais e CI aprovados, validação hospedada pausada por decisão de evitar cobranças; nenhum Codespace criado. Página didática de Planilhas em implementação independente. Agendamento externo da limpeza necessário antes da oficina. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -208,11 +208,15 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 - Provedor/modelo de IA e orçamento.
 - Forma de disponibilização dos resultados (download imediato ou URL temporária).
 - Política de avaliação de exercícios sem login.
-- Se a oficina exigirá conta GitHub de todos os participantes ou terá alternativa sem Codespaces.
+- Alternativa local confirmada: exercício de Arquivos baixável e executável com Python 3.12+, sem conta GitHub. Codespaces é opcional e permanece pausado para evitar cobranças.
 
 ## 14. Próxima ação
 
-Enviar `feat/exercicio-organizacao`, abrir PR para `dev`, confirmar o CI e revisar. Após integração, iniciar `feat/codespaces-arquivos`: devcontainer, preparação de dependências, instruções e links reais para abrir o repositório. Validar o ambiente disponível localmente e solicitar validação externa de Codespaces quando necessária, sem confundir testes locais com execução hospedada. Depois seguem Planilhas, IA controlada e preparação para publicação. A autorização de 15/10/2026 permite seguir essas etapas sem nova aprovação a cada branch, parando quando houver decisão pendente ou ação externa necessária. Push manual permanece a cargo do responsável. Limpeza integrada pelo PR #11. Agendamento externo da limpeza precisa ser configurado e validado antes da oficina, conforme `docs/OPERACAO_RESULTADOS.md`.
+Enviar `feat/laboratorio-planilhas-pagina`, abrir PR para `dev`, confirmar CI e revisar. A branch parte de `dev` em `3585612`, sem depender do PR #13. Depois da integração, seguir com `feat/upload-planilhas`, `feat/leitura-csv-xlsx`, `feat/limpeza-dados`, `feat/exportacao-planilhas` e `feat/exercicio-planilhas`, uma entrega por vez. Depois seguem IA controlada e preparação para publicação.
+
+O PR #13 (`feat/codespaces-arquivos`) permanece em rascunho, sem merge: ambiente testado em contêiner local e CI aprovado, mas sem execução hospedada. Em 15/10/2026, o responsável determinou que não quer cobranças na conta. Não criar Codespaces nem contratar serviços com possibilidade de cobrança; retomar essa validação somente com nova orientação explícita. O percurso ativo usa o pacote de exercício e Python local. Essa restrição operacional não altera Django, Templates ou Bootstrap.
+
+A autorização de 15/10/2026 permite seguir as etapas aprovadas sem nova aprovação a cada branch, parando quando houver decisão pendente ou ação externa necessária. Push manual permanece a cargo do responsável. Exercício integrado pelo PR #12. Agendamento externo da limpeza precisa ser configurado e validado antes da oficina, conforme `docs/OPERACAO_RESULTADOS.md`.
 
 ---
 
@@ -428,6 +432,8 @@ Implementar interface `classificar_solicitacoes(itens: list[str]) -> list[Classi
 
 ## 23. GitHub Codespaces — contrato de preparação
 
+**Estado em 15/10/2026:** opcional e pausado. PR #13 em rascunho, sem integração; contêiner local e CI validados, execução hospedada não realizada. Nenhum Codespace criado. Usar Python local e materiais baixáveis enquanto vigorar a restrição de não gerar cobranças. O contrato abaixo descreve o ambiente planejado, não uma disponibilidade hospedada atual.
+
 Manter `.devcontainer/devcontainer.json` com Python e extensões úteis (Python, Pylance), `postCreateCommand` para instalar dependências e `forwardPorts` apenas se necessário. Repositório deve ter `README.md` com requisitos de conta GitHub, como abrir Codespaces, iniciar terminal, executar `python --version`, instalar dependências se necessário e rodar `pytest`. Separar arquivos `starter.py` com `TODO`s, `README.md` de cada exercício, dados fictícios e testes locais. Não colocar chave de IA, `.env`, tokens ou dados reais no Git. Fornecer URL de Codespaces apenas quando nome do repositório for conhecido; nunca inventar URL. Não depender de Codespaces para funcionamento dos botões de demonstração do site. Preparar plano B: scripts `.py` e materiais para download, executáveis localmente por quem já tenha Python.
 
 **Exercício de Arquivos implementado antes do devcontainer:** três TODOs para classificação, nomes únicos e linha de inventário. `python tests/verificar.py` executa seis critérios locais em `unittest`, somente com stdlib. O starter intencionalmente incompleto falha até o participante resolver as funções. O apoio aceita exclusivamente o ZIP fictício versionado, validando tamanho e SHA-256 antes de abrir; não substitui o serviço de uploads do site nem aceita ZIP arbitrário. A saída usa criação exclusiva e falhas descartam somente a saída recém-criada. Geração de ZIP/CSV fica no apoio para concentrar o exercício inicial nas três regras de negócio. A referência do instrutor passa os mesmos critérios e não entra no pacote público baixável. Nenhum código é enviado ou executado no servidor e não há progresso persistente. A duração de 25 minutos é uma estimativa a validar na oficina.
@@ -576,7 +582,10 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 15/10/2026 | Integrado | Download integrado pelo PR #10 com dois checks aprovados; `dev` sincronizada em `52378b3` |
 | 15/10/2026 | Implementado na feature | Comando de limpeza de expirados com simulação, lotes e recuperação de falhas; Arquivos disponível no catálogo; agendamento externo pendente |
 | 15/10/2026 | Integrado | Limpeza e acesso a Arquivos integrados pelo PR #11 com dois checks aprovados; `dev` sincronizada em `bc40c5c` |
-| 15/10/2026 | Implementado na feature | Exercício guiado com três TODOs, seis critérios locais e pacote público sem referência do instrutor; Codespaces pendente |
+| 15/10/2026 | Integrado | Exercício de organização integrado pelo PR #12 com dois checks aprovados; `dev` em `3585612` |
+| 15/10/2026 | Pausado | PR #13 de Codespaces em rascunho; contêiner local e CI aprovados, sem validação hospedada nem Codespace criado |
+| 15/10/2026 | Restrição confirmada | Responsável não quer cobranças; não criar Codespaces ou contratar serviços pagos. Percurso ativo com Python local e pacote baixável |
+| 15/10/2026 | Implementado na feature | Página didática de Planilhas, seis etapas e CSV fictício de oito linhas; processamento ainda indisponível |
 | 14/10/2026 | Decisao tecnica | Primeiro perfil aceita Stored/Deflate; recusa ZIP64, criptografia, multiplos volumes, outros metodos e metadados de sistema; restricoes explicitas na UI e materiais |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
@@ -595,6 +604,8 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - Sem processamento de uploads, downloads, exercicios executaveis ou devcontainer nesta entrega. Sem push, merge ou publicacao.
 
 ### Changelog
+
+- **15/10/2026 — Planilhas e percurso local:** página didática e CSV fictício adicionados, sem processamento. Exercício de Arquivos integrado pelo PR #12. PR #13 de Codespaces mantido em rascunho, após recusa de possíveis cobranças; nenhum Codespace criado. Programação local é o percurso ativo, preservando a arquitetura aprovada.
 
 - **15/10/2026 — exercício de Arquivos:** script-base, apoio restrito ao ZIP fictício, critérios locais e referência do instrutor. Lista/detalhe e download de pacote autocontido adicionados; links no laboratório e textos da home alinhados. Limpeza integrada pelo PR #11; devcontainer em entrega própria.
 - **15/10/2026 — limpeza de resultados:** comando de remoção restrita de expirados com modo de simulação, revalidação e testes de falhas. Fluxo de Arquivos habilitado no catálogo/home; operação e exemplo de agendamento documentados, sem instalar cron. Download integrado pelo PR #10.
@@ -630,9 +641,10 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [x] Comando de limpeza implementado, testado e integrado pelo PR #11.
 - [ ] Limpeza agendada e validada externamente antes da oficina.
 - [x] Fluxo web do Laboratório de Arquivos implementado, testado e integrado em `dev`.
-- [x] Exercício de organização com material e critérios locais implementado e testado na feature (envio e integração pendentes).
+- [x] Exercício de organização com material e critérios locais integrado pelo PR #12.
+- [x] Página didática de Planilhas e CSV fictício implementados e testados na feature (envio e integração pendentes).
 - [ ] Laboratório de Planilhas implementado e testado.
-- [ ] Devcontainer Codespaces validado.
+- [ ] Codespaces validado hospedado e integrado (PR #13 em rascunho, pausado por restrição de custos; contêiner local e CI já validados).
 - [ ] Laboratório de IA implementado e testado.
 - [ ] Testes de concorrência e ensaio da oficina.
 - [ ] Publicação em ambiente online.
@@ -774,3 +786,15 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Dez testes novos do site cobrem páginas, métodos, conteúdo exato do pacote, exclusão da referência, material ausente, execução sem site-packages, erro esperado do starter, material adulterado, saídas inválidas e descarte de saída parcial. Pacote descompactado em área temporária foi testado primeiro com TODOs pendentes e depois com a referência no lugar do starter: seis critérios passaram e a CLI produziu ZIP íntegro com total seis, sem instalar bibliotecas.
 - Navegador local: lista abriu o detalhe e botão baixou o pacote; ZIP baixado conferido com os cinco arquivos, hash do exemplo preservado e sem referência. Detalhe conferido em desktop e mobile 390 × 844, sem rolagem horizontal no tamanho testado. Capturas `/tmp/autolab-exercicio-desktop.png` e `/tmp/autolab-exercicio-mobile.png`, fora do Git; servidor de teste encerrado.
 - Scripts rodam com Python 3.12+ sem Django ou pip. Exercícios de Planilhas/IA e Codespaces permanecem em preparação. CI remoto desta branch aguarda push manual; validação do devcontainer hospedado ficará na próxima entrega.
+
+
+### Evidências da página didática de Planilhas
+
+- Branch: `feat/laboratorio-planilhas-pagina`; base `dev`, `3585612`; destino do PR: `dev`. Independente do PR #13 de Codespaces, que permanece em rascunho.
+- Página em `/laboratorios/planilhas/` reutiliza as seis etapas Bootstrap e oferece download fixo GET/HEAD em `/laboratorios/planilhas/exemplo/`. Menu desktop/mobile sinaliza acesso didático; catálogo mantém a automação indisponível até concluir o processamento.
+- Material público fictício UTF-8 com cinco colunas e oito linhas. Referência de limpeza: aparar espaços, remover linha completamente vazia e duplicatas completas resulta em cinco registros; Carla sem e-mail e identificadores com zeros iniciais permanecem.
+- Sem formulário, pandas/openpyxl, processamento, exportação ou script-base de Planilhas nesta entrega. Trecho Python apenas lê o CSV; tabela de resultado identificada como referência fixa.
+- Cinco testes novos verificam estrutura, escopo, navegação, métodos, download fixo, material ausente e consistência da referência. Suítes Django e pytest: 127 testes passaram em cada uma.
+- Navegador: seis abas funcionaram, seta para a direita ativou Executar a partir de Aprender e CSV baixou. Desktop e viewport 390 × 844 conferidos; tabela com rolagem interna e sem transbordamento horizontal da página. Capturas locais `/tmp/autolab-planilhas-desktop.png` e `/tmp/autolab-planilhas-mobile.png`, fora do Git.
+- `manage.py check`: sem problemas; `makemigrations --check --dry-run`: sem alterações. Dependências compatíveis verificadas com `uv --cache-dir /tmp/autolab-uv-cache pip check --python .venv/bin/python` (venv local não inclui pip). `git diff --check` passou; CSV baixado idêntico ao versionado por comparação de bytes. Servidor de teste encerrado.
+- CI remoto e integração aguardam push manual. Próxima entrega: `feat/upload-planilhas` após integração desta página.

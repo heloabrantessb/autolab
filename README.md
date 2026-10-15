@@ -2,7 +2,7 @@
 
 Plataforma web educacional desenvolvida para a oficina de **Automação de Processos com IA e Python**.
 
-O AutoLab permite que os participantes aprendam conceitos de automação, executem fluxos diretamente no navegador com dados fictícios, inspecionem e alterem códigos Python no GitHub Codespaces e resolvam desafios práticos sem necessidade de configurar dependências em suas máquinas locais.
+O AutoLab permite aprender conceitos de automação, executar o fluxo de Arquivos no navegador com dados fictícios e praticar Python localmente com um pacote de exercício baixável. Planilhas está na etapa de conteúdo didático; seu processamento ainda será implementado.
 
 ---
 
@@ -11,7 +11,7 @@ O AutoLab permite que os participantes aprendam conceitos de automação, execut
 - **Backend:** Python 3.12+ e Django 5.2 LTS (Arquitetura Monolítica MVT)
 - **Frontend:** Django Templates, Bootstrap 5.3 e CSS customizado acessível
 - **Banco de Dados:** SQLite (desenvolvimento e testes) / PostgreSQL (produção)
-- **Ambiente de Exercícios:** GitHub Codespaces (com `.devcontainer`)
+- **Ambiente de Exercícios:** Python local; GitHub Codespaces opcional, pausado antes da validação hospedada
 - **Testes:** Pytest e Django TestCase
 
 As versões exatas estão fixadas em `requirements.txt`; Django 5.2.18 foi
@@ -147,12 +147,26 @@ python starter.py --saida resultado.zip
 
 Os testes do exercício falham inicialmente até resolver os três TODOs.
 Eles verificam o código local; o site não executa soluções dos participantes.
-Codespaces ainda será configurado em sua entrega própria.
+O ambiente Codespaces está no [PR #13](https://github.com/heloabrantessb/autolab/pull/13),
+em rascunho e sem integração. Contêiner local e CI foram validados; nenhum
+Codespace foi criado. A validação hospedada está pausada por decisão de evitar
+cobranças. Use o pacote com Python local; não é necessária conta GitHub.
 
 Para o instrutor, `python tests/verificar.py --referencia` verifica a solução
 de referência no repositório completo. Ela não é incluída no pacote baixado.
 O CI do site verifica tanto as falhas esperadas do starter quanto a aprovação
 da referência e o funcionamento do pacote completado, sem dependências externas.
+
+## Conteúdo didático de Planilhas
+
+Acesse `/laboratorios/planilhas/` pelo menu **Planilhas: aprender** para as seis
+etapas e o download do [CSV fictício](materials/planilhas/README.md). O exemplo
+contém duplicatas, espaços e uma linha vazia; a referência preserva registros
+parcialmente preenchidos e identificadores com zeros iniciais.
+
+Upload, leitura CSV/XLSX, limpeza e exportação ainda serão entregues em branches
+próprias. A tabela de referência não representa uma execução no site, e a
+automação continua indisponível no catálogo.
 
 ## 📐 Padrões de Contribuição
 
