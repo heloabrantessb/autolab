@@ -9,7 +9,7 @@
   <p class="small text-muted">Nível: iniciante · Pré-requisitos: noções de arquivos, pastas e extensões · Duração sugerida: 20 minutos.</p>
   <div class="alert alert-info" role="status">
     Envie um ZIP para organizar os arquivos por extensão e baixar o inventário.
-    O exercício executável e o ambiente Codespaces serão preparados em uma próxima entrega.
+    O exercício Python está disponível para download. O ambiente Codespaces ainda está em preparação.
   </div>
 </header>
 
@@ -81,7 +81,8 @@ print(categoria("clientes.csv"))  # Planilhas</code></pre>
       <li>Teste mentalmente o trecho Python e compare as categorias.</li>
       <li>Identifique quais nomes podem colidir ao remover as subpastas.</li>
     </ol>
-    <p>O script-base e os testes locais serão publicados na entrega de exercícios. O Codespaces ainda não está preparado para esta atividade.</p>
+    <p>O script-base, o material fictício e os testes locais já estão disponíveis. Complete três funções e verifique sua solução no seu ambiente Python.</p>
+    <a class="btn btn-primary mb-2" href="{% url 'exercicios:detalhe' 'organizacao-arquivos' %}">Abrir exercício de Arquivos</a>
     <button class="btn btn-secondary" type="button" disabled>Exercício no Codespaces em breve</button>
   </section>
 
@@ -94,7 +95,7 @@ print(categoria("clientes.csv"))  # Planilhas</code></pre>
       <li>Registre caminho original, nome de saída, categoria e status no inventário.</li>
       <li>Verifique se os seis arquivos continuam presentes após a organização.</li>
     </ul>
-    <p>Dica: contar apenas os nomes não basta; compare também o conteúdo dos dois documentos. A validação automatizada virá com os testes locais do exercício, sem executar código de participantes no servidor.</p>
+    <p>Dica: contar apenas os nomes não basta; compare também o conteúdo dos dois documentos. Use os testes locais do exercício para verificar sua solução, sem executar código de participantes no servidor.</p>
   </section>
 
   <section class="tab-pane autolab-lab-panel{% if etapa_ativa == 'resultado' %} active{% endif %}" id="arquivos-resultado" role="tabpanel" aria-labelledby="arquivos-resultado-tab" tabindex="0">
