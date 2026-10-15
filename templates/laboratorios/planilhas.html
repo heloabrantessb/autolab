@@ -13,7 +13,7 @@
   <p>As seis etapas estão disponíveis abaixo. Use os links para ir até cada seção.</p>
 </noscript>
 <div class="tab-content">
-  <section class="tab-pane autolab-lab-panel active" id="planilhas-aprender" role="tabpanel" aria-labelledby="planilhas-aprender-tab" tabindex="0">
+  <section class="tab-pane autolab-lab-panel{% if etapa_ativa == 'aprender' %} active{% endif %}" id="planilhas-aprender" role="tabpanel" aria-labelledby="planilhas-aprender-tab" tabindex="0">
     <h2 class="h4">Aprender: limpar sem perder informação</h2>
     <p>Uma equipe recebeu uma tabela de clientes fictícios com espaços extras, registros repetidos e campos vazios. Antes de automatizar, defina o que deve mudar e o que precisa ser preservado.</p>
     <ul>
@@ -25,12 +25,13 @@
     <p>CSV é um arquivo de texto com linhas e colunas; XLSX é uma pasta de trabalho Excel. Na primeira versão serão aceitos CSV UTF-8 e XLSX; XLS e XLSM ficam fora deste corte. Macros não serão executadas.</p>
     <a class="btn btn-outline-primary" href="{% url 'laboratorios:exemplo_planilhas' %}">Baixar CSV fictício</a>
   </section>
-  <section class="tab-pane autolab-lab-panel" id="planilhas-executar" role="tabpanel" aria-labelledby="planilhas-executar-tab" tabindex="0">
+  <section class="tab-pane autolab-lab-panel{% if etapa_ativa == 'executar' %} active{% endif %}" id="planilhas-executar" role="tabpanel" aria-labelledby="planilhas-executar-tab" tabindex="0">
     <h2 class="h4">Executar: conheça a entrada</h2>
     <p>O CSV tem oito linhas de dados e cinco colunas. Inclui uma duplicata exata, uma linha completamente vazia e duas versões de Bruno que ficam iguais depois de aparar os espaços.</p>
     <p>Carla não tem e-mail; sua linha deve permanecer. Nomes e contatos são fictícios; os endereços usam <code>example.invalid</code>.</p>
     <a class="btn btn-outline-primary mb-3" href="{% url 'laboratorios:exemplo_planilhas' %}">Baixar CSV fictício</a>
-    <p>O fluxo previsto terá opções de limpeza, prévia e exportação. Limites previstos: {{ limite_mib|floatformat:"-1" }} MiB, 10 mil linhas e 30 colunas. O formulário e suas validações ainda não estão disponíveis.</p>
+    <p>Envie o exemplo para conferir extensão e tamanho (até {{ limite_mib|floatformat:"-1" }} MiB). A leitura CSV/XLSX ainda não está disponível; extensão aceita não comprova conteúdo válido. Limites previstos para a leitura: 10 mil linhas e 30 colunas.</p>
+    {% include "partials/upload_planilha_form.html" %}
     <button class="btn btn-secondary" type="button" disabled>Processamento de planilhas em breve</button>
     <p class="small text-muted mt-2">Use apenas dados fictícios na oficina. Uma extensão de arquivo não comprova seu conteúdo.</p>
   </section>

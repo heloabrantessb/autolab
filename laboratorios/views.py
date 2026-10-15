@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST, require_safe
 
-from .forms import UploadZIPForm
+from .forms import UploadPlanilhaForm, UploadZIPForm
 from .models import ResultadoTemporario
 from .services.resultados import caminho_resultado, criar_resultado
 from .services.zip_validator import ArquivoInvalido
@@ -127,6 +127,7 @@ def planilhas(request):
     return render(request, "laboratorios/planilhas.html", {
         "etapas": ETAPAS_LABORATORIO, "etapa_ativa": "aprender",
         "limite_mib": settings.MAX_SPREADSHEET_UPLOAD_BYTES / (1024 * 1024),
+        "form": UploadPlanilhaForm(),
     })
 
 
@@ -141,3 +142,17 @@ def exemplo_planilhas(request):
         arquivo, as_attachment=True, filename="autolab-clientes-exemplo.csv",
         content_type="text/csv; charset=utf-8",
     )
+
+
+@require_POST
+@never_cache
+def receber_planilha(request):
+    """Confere recebimento inicial; não interpreta nem persiste a entrada."""
+    form = UploadPlanilhaForm(request.POST, request.FILES)
+    recebido = form.is_valid()
+    return render(request, "laboratorios/planilhas.html", {
+        "etapas": ETAPAS_LABORATORIO, "etapa_ativa": "executar",
+        "limite_mib": settings.MAX_SPREADSHEET_UPLOAD_BYTES / (1024 * 1024),
+        "form": UploadPlanilhaForm() if recebido else form,
+        "recebido": recebido,
+    }, status=200 if recebido else 400)

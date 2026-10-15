@@ -1,4 +1,4 @@
-"""Formulários de entrada e tradução dos erros de inspeção ZIP."""
+"""Formulários de entrada e validações dos laboratórios."""
 
 from django import forms
 from django.conf import settings
@@ -72,4 +72,57 @@ class UploadZIPForm(forms.Form):
             len(self.files.getlist(nome)) for nome in self.files
         ) > 1:
             raise forms.ValidationError("Envie apenas um arquivo ZIP por vez.")
+        return dados
+
+
+class UploadPlanilhaForm(forms.Form):
+    arquivo_planilha = forms.FileField(
+        label="Planilha CSV ou XLSX",
+        validators=[FileExtensionValidator(
+            allowed_extensions=["csv", "xlsx"],
+            message="Envie um arquivo com extensão .csv ou .xlsx.",
+        )],
+        widget=forms.ClearableFileInput(attrs={
+            "class": "form-control", "accept": ".csv,.xlsx",
+        }),
+        error_messages={
+            "required": "Selecione um arquivo CSV ou XLSX.",
+            "empty": "O arquivo enviado está vazio.",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.limite_bytes = settings.MAX_SPREADSHEET_UPLOAD_BYTES
+        self.fields["arquivo_planilha"].help_text = (
+            f"Envie um único CSV ou XLSX de até {self.limite_bytes / (1024 * 1024):g} MiB. "
+            "Nesta etapa conferimos somente extensão e tamanho. "
+            "O conteúdo ainda não será lido, limpo ou exportado."
+        )
+
+    def clean_arquivo_planilha(self):
+        arquivo = self.cleaned_data["arquivo_planilha"]
+        erro_limite = forms.ValidationError(
+            "O arquivo excede o tamanho máximo permitido.", code="limite_excedido",
+        )
+        if arquivo.size > self.limite_bytes:
+            raise erro_limite
+        total = 0
+        try:
+            for parte in arquivo.chunks(chunk_size=64 * 1024):
+                total += len(parte)
+                if total > self.limite_bytes:
+                    raise erro_limite
+        finally:
+            arquivo.seek(0)
+        if not total:
+            raise forms.ValidationError("O arquivo enviado está vazio.", code="empty")
+        return arquivo
+
+    def clean(self):
+        dados = super().clean()
+        if hasattr(self.files, "getlist") and sum(
+            len(self.files.getlist(nome)) for nome in self.files
+        ) > 1:
+            raise forms.ValidationError("Envie apenas uma planilha por vez.")
         return dados

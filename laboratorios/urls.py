@@ -11,6 +11,7 @@ urlpatterns = [
         path("arquivos/organizar/", views.organizar_arquivos, name="organizar_arquivos"),
         path("arquivos/exemplo/", views.exemplo_arquivos, name="exemplo_arquivos"),
         path("planilhas/", views.planilhas, name="planilhas"),
+        path("planilhas/receber/", views.receber_planilha, name="receber_planilha"),
         path("planilhas/exemplo/", views.exemplo_planilhas, name="exemplo_planilhas"),
     ])),
     path("resultados/", include(resultados_urls.urlpatterns)),
