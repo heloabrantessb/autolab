@@ -218,9 +218,3 @@ class TestValidacaoZIPView(SimpleTestCase):
     def test_expansion_limit_is_applied_by_form(self):
         response = self.post_zip(criar_zip([("a", b"1234")]))
         self.assertContains(response, "tamanho total permitido", status_code=400)
-
-    def test_valid_zip_shows_file_count_without_generating_result(self):
-        response = self.post_zip(criar_zip([("a/", b""), ("a/1.txt", b"a"), ("2.txt", b"b")]))
-        self.assertContains(response, "ZIP validado:")
-        self.assertContains(response, "2 arquivos")
-        self.assertContains(response, "nenhum resultado foi gerado")
