@@ -116,9 +116,20 @@ O upload original é descartado após processamento; o ZIP organizado e os
 metadados permanecem até a limpeza. Expirar bloqueia novos acessos, sem
 interromper downloads já iniciados.
 
-O comando de limpeza e seu agendamento externo serão preparados na próxima
-entrega. Esta versão ainda não realiza exclusão periódica dos resultados;
-o catálogo mantém a automação em breve até concluir esse ciclo de vida.
+O laboratório de Arquivos está disponível no catálogo. Para simular e executar
+a limpeza de resultados expirados:
+
+```bash
+python manage.py limpar_resultados --dry-run
+python manage.py limpar_resultados --batch-size 100
+```
+
+A execução periódica exige um agendador externo; o processo web não inicia
+essa rotina. Antes da oficina/publicação, configure uma execução a cada cinco
+minutos, sem sobreposição, usando o mesmo banco e `RESULTS_ROOT` da aplicação.
+Consulte a [operação dos resultados](docs/OPERACAO_RESULTADOS.md) para retenção,
+exemplo de agendamento e tratamento de falhas. Nenhum agendador foi instalado
+ou ativado automaticamente.
 
 ---
 
