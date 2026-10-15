@@ -29,7 +29,7 @@ class TestExercicioArquivos(SimpleTestCase):
     def test_listing_detail_and_lab_link_to_the_activity(self):
         self.assertContains(self.client.get(reverse("exercicios:lista")), f'href="{self.detalhe}"')
         page = self.client.get(self.detalhe)
-        for text in ("categoria", "nome_unico", "linha_inventario", "python tests/verificar.py", "não recebe nem executa", "Codespaces ainda está em preparação"):
+        for text in ("categoria", "nome_unico", "linha_inventario", "python tests/verificar.py", "não recebe nem executa", "validação no serviço hospedado ainda está pendente"):
             self.assertContains(page, text)
         self.assertContains(page, f'href="{self.materiais}"')
         self.assertContains(self.client.get(reverse("laboratorios:arquivos")), f'href="{self.detalhe}"')

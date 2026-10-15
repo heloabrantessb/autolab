@@ -9,7 +9,7 @@
   <p class="small text-muted">Nível: iniciante · Pré-requisitos: noções de arquivos, pastas e extensões · Duração sugerida: 20 minutos.</p>
   <div class="alert alert-info" role="status">
     Envie um ZIP para organizar os arquivos por extensão e baixar o inventário.
-    O exercício Python está disponível para download. O ambiente Codespaces ainda está em preparação.
+    O exercício Python está disponível para download, com instruções para preparar um Codespace ou usar Python localmente.
   </div>
 </header>
 
@@ -83,7 +83,7 @@ print(categoria("clientes.csv"))  # Planilhas</code></pre>
     </ol>
     <p>O script-base, o material fictício e os testes locais já estão disponíveis. Complete três funções e verifique sua solução no seu ambiente Python.</p>
     <a class="btn btn-primary mb-2" href="{% url 'exercicios:detalhe' 'organizacao-arquivos' %}">Abrir exercício de Arquivos</a>
-    <button class="btn btn-secondary" type="button" disabled>Exercício no Codespaces em breve</button>
+    {% include "partials/codespaces_arquivos.html" %}
   </section>
 
   <section class="tab-pane autolab-lab-panel" id="arquivos-desafio" role="tabpanel" aria-labelledby="arquivos-desafio-tab" tabindex="0">

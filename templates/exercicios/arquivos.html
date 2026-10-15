@@ -29,7 +29,9 @@ python starter.py --saida resultado.zip</code></pre>
 <h2 class="h4">Desafio</h2>
 <p>Explique os casos <code>foto.JPG</code> e <code>LEIA-ME</code>. Teste uma colisão quando <code>a.txt</code> e <code>a_2.txt</code> já estão usados. Por que apenas contar os nomes não comprova que os conteúdos foram preservados?</p>
 <p>Dica: use <code>Path(nome).suffix.lower()</code> para a extensão e um conjunto com <code>casefold()</code> para os nomes usados. Se uma saída já existir, escolha outro nome em <code>--saida</code>.</p>
-<p>A verificação acontece no seu computador ou ambiente Python. O site não recebe nem executa sua solução e não registra progresso. O ambiente Codespaces ainda está em preparação.</p>
+<p>A verificação acontece no seu computador ou ambiente Python. O site não recebe nem executa sua solução e não registra progresso.</p>
+<h2 class="h4">Ambiente Python no navegador</h2>
+{% include "partials/codespaces_arquivos.html" %}
 <a class="btn btn-outline-primary mb-2" href="{% url 'laboratorios:arquivos' %}">Comparar com a demonstração do site</a>
 <a class="btn btn-outline-secondary mb-2" href="{% url 'exercicios:lista' %}">Voltar aos exercícios</a>
 {% endblock %}
