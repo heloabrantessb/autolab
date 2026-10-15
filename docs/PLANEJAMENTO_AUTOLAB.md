@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 15/10/2026
-**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, página didática, recebimento e inspeção ZIP integrados em `dev`. Serviço de organização implementado e validado na `feat/organizacao-arquivos`, aguardando envio e revisão. Conexão à view, download e ciclo de vida dos resultados ainda pendentes. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, página didática, recebimento, inspeção e serviço de organização ZIP integrados em `dev`. Resumo web, download por token e bloqueio por expiração implementados na `feat/download-resultado`, aguardando envio e revisão. Limpeza, exercícios e Codespaces ainda pendentes. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Enviar `feat/organizacao-arquivos`, abrir PR para `dev`, confirmar o CI e revisar. Após integração autorizada, iniciar `feat/download-resultado`: conectar o serviço à view, retornar resumo e disponibilizar ZIP por token com expiração. Limpeza programada e exercícios continuam em entregas próprias. Validação ZIP integrada pelo PR #8.
+Enviar `feat/download-resultado`, abrir PR para `dev`, confirmar o CI e revisar. Após integração, iniciar `feat/limpeza-resultados`: comando com simulação e remoção isolada de resultados expirados, testes e instruções de agendamento externo. Depois seguem exercício e Codespaces, Planilhas, IA controlada e preparação para publicação. A autorização de 15/10/2026 permite seguir essas etapas sem nova aprovação a cada branch, parando quando houver decisão pendente ou ação externa necessária. Push manual permanece a cargo do responsável. Organização integrada pelo PR #9.
 
 ---
 
@@ -347,6 +347,7 @@ plataforma-autolab/
 | GET | `/exercicios/` | `exercicios:lista` | HTML 200 |
 | GET | `/exercicios/<slug:slug>/` | `exercicios:detalhe` | HTML 200/404 |
 | GET | `/resultados/<uuid:token>/download/` | `laboratorios:download_resultado` | FileResponse 200, 404/410 se inválido/expirado |
+| GET | `/resultados/<uuid:token>/` | `laboratorios:resultado` | Resumo HTML 200, 404/410 se ausente/expirado |
 
 Usar `reverse()` e `{% url %}` em templates; não espalhar URLs hardcoded. No MVP HTML com formulários Django, não construir API REST paralela sem necessidade. Em POST bem-sucedido, preferir padrão POST/Redirect/GET se houver estado temporário associado; documentar alternativa se escolhida. Todas as rotas POST usam CSRF e métodos restritos.
 
@@ -400,6 +401,10 @@ Nomes de saída usam Unicode NFC, substituem caracteres especiais e nomes reserv
 
 Criar `RESULTS_ROOT` fora de static/media pública. Para cada execução usar UUID aleatório e diretório isolado; manter metadados mínimos (`token`, `arquivo`, `criado_em`, `expira_em`) em SQLite ou manifesto protegido no servidor. Escolha recomendada: modelo `ResultadoTemporario` com UUID como chave pública, path relativo, criação e expiração; não armazenar caminho absoluto fornecido pelo cliente. Download via view que valida token, prazo, existência e localização sob `RESULTS_ROOT`, usando `FileResponse` com `Content-Disposition: attachment`; `Cache-Control: no-store`. Rotina de limpeza por management command (`python manage.py limpar_resultados`) e agendamento externo; **não** depender de cron dentro do processo web. Garantir que exclusão não afete arquivos de outra execução. Para MVP sem login, quem possuir o link de resultado pode baixá-lo até expirar; informar isso e usar token imprevisível.
 
+**Implementado na entrega de download:** modelo SQLite com migração, UUID4, caminho relativo canônico, criação/expiração, tipo e resumo (contagens e avisos). Nome do upload não é persistido nem usado como caminho; campos de resumo permitem POST/Redirect/GET sem guardar o arquivo original ou depender de sessão. POST válido responde 303 para a página de resumo; atualizar essa página não processa novamente. Upload inválido retorna 400; falha de armazenamento retorna 503 com mensagem segura. O upload original é descartado ao terminar a organização. Falhas de processamento ou gravação dos metadados removem somente a área recém-criada.
+
+Resumo e download aceitam GET/HEAD e usam `Cache-Control: no-store`; em sucesso também usam `Referrer-Policy: no-referrer`. Token inexistente, tipo diferente, arquivo ausente, caminho adulterado ou link simbólico retornam 404; prazo atingido retorna 410. A área usa caminho `<token>/arquivos_organizados.zip`, fora de static/media. `RESULT_TTL_MINUTES` positivo mantém default de 30 minutos, contado após o processamento. O prazo bloqueia novos acessos e não interrompe um download já iniciado. Não há exclusão automática nesta branch; o comando de limpeza será entregue em seguida, com agendamento externo necessário antes da oficina. O catálogo permanece em breve até completar esse ciclo de vida.
+
 ### 20.6 Exemplo de saída
 
 Entrada: `relatorio.pdf`, `foto.JPG`, `clientes.csv`, `notas.txt`, `subpasta/relatorio.pdf`. Saída: `Documentos/relatorio.pdf`, `Documentos/relatorio_2.pdf`, `Documentos/notas.txt`, `Imagens/foto.JPG`, `Planilhas/clientes.csv` e `relatorio.csv`. Contagens: Documentos=3, Planilhas=1, Imagens=1, Outros=0, total=5.
@@ -451,10 +456,14 @@ O MVP não precisa de modelo de usuário, curso ou progresso. Modelo opcional/re
 |---|---|---|
 | `token` | UUIDField primary_key | `uuid4`, não sequencial |
 | `relative_path` | CharField | path relativo controlado pelo servidor |
-| `original_filename` | CharField | nome sanitizado apenas para exibição |
 | `created_at` | DateTimeField | automático |
 | `expires_at` | DateTimeField | UTC-aware |
 | `kind` | CharField | `arquivos`, `planilhas`, `ia` |
+| `total_arquivos` | PositiveIntegerField | total de arquivos processados |
+| `por_categoria` | JSONField | contagens do resumo |
+| `avisos` | JSONField | ajustes de nomes; exibição escapada |
+
+Na primeira implementação, o nome do upload não é armazenado por não ser necessário à apresentação. Contagens e avisos são os metadados adicionais usados para reconstruir o resumo após redirecionamento; o conteúdo dos arquivos permanece somente no ZIP temporário.
 
 Nunca persistir conteúdo de arquivos ou prompts por padrão. Evitar adicionar modelos de `Laboratorio`/`Exercicio` se dados estáticos versionados atenderem ao MVP; avaliar modelagem no futuro para painel do instrutor.
 
@@ -555,6 +564,8 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 14/10/2026 | Implementado na feature | Inspecao ZIP desacoplada de Django; limites de entradas e bytes reais, caminhos, tipos, CRC e cabecalhos; sem extracao ou escrita |
 | 15/10/2026 | Integrado | Inspeção ZIP integrada pelo PR #8 com dois checks aprovados; `dev` sincronizada em `5ffb3ff` |
 | 15/10/2026 | Implementado na feature | Serviço de organização por extensão com nomes seguros, colisões sem sobrescrita, inventário CSV e ZIP isolado; integração web em entrega posterior |
+| 15/10/2026 | Integrado | Organização integrada pelo PR #9 com dois checks aprovados; `dev` sincronizada em `5779eb3` |
+| 15/10/2026 | Implementado na feature | Resumo e download temporário com token, POST/Redirect/GET e expiração; limpeza ainda em entrega própria |
 | 14/10/2026 | Decisao tecnica | Primeiro perfil aceita Stored/Deflate; recusa ZIP64, criptografia, multiplos volumes, outros metodos e metadados de sistema; restricoes explicitas na UI e materiais |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
@@ -574,6 +585,7 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 
 ### Changelog
 
+- **15/10/2026 — download de resultados:** view conectada à organização, metadados temporários com migração, resumo após redirecionamento e download com validação de token/caminho/prazo. Upload descartado ao concluir; limpeza periódica pendente. Organização integrada pelo PR #9.
 - **15/10/2026 — organização de arquivos:** serviço Python independente de Django gera categorias, inventário e ZIP em diretório exclusivo. Cópia limitada reutiliza o leitor da validação; erros eliminam a saída parcial. Validação integrada pelo PR #8; fluxo web de resultados permanece pendente.
 - **14/10/2026 — validação ZIP:** pré-inspeção limitada do diretório central, inspeção de metadados e leitura limitada de Stored/Deflate com CRC. Formulário traduz erros de domínio; resumo exibe quantidade de arquivos sem gerar resultados. Upload integrado pelo PR #7.
 - **14/10/2026 — upload:** formulário ZIP e endpoint POST adicionados com validação inicial de extensão, arquivo vazio, quantidade e tamanho. Conferência de bytes lidos e estados de erro/recebimento na aba Executar. Página didática integrada pelo PR #6.
@@ -600,7 +612,9 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [x] Página didática e ZIP de exemplo integrados em `dev` pelo PR #6.
 - [x] Formulário e recebimento ZIP integrados em `dev` pelo PR #7.
 - [x] Inspeção ZIP implementada, testada e integrada em `dev` pelo PR #8.
-- [x] Serviço de organização e inventário implementado e testado na feature (envio e integração pendentes).
+- [x] Serviço de organização e inventário implementado, testado e integrado pelo PR #9.
+- [x] Resumo, download por token e bloqueio por expiração implementados e testados na feature (envio e integração pendentes).
+- [ ] Limpeza de resultados expirados implementada e agendada externamente.
 - [ ] Laboratório de Arquivos implementado e testado.
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Devcontainer Codespaces validado.
@@ -707,3 +721,16 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Demonstração executada em Python sem inicializar Django: exemplo produziu seis arquivos, Documentos=3, Planilhas=1, Imagens=1, Outros=1; segundo comunicado virou `comunicado_2.txt`. Integridade do ZIP e inventário conferidos. Artefato local `/tmp/autolab-arquivos-organizados-demo.zip`, fora do Git.
 - A view ainda apenas inspeciona o upload; catálogo mantém automação em breve. Resumo web, persistência de token, download, expiração e limpeza permanecem nas entregas seguintes. Nenhuma alteração visual nesta branch; testes de capacidade da oficina continuam pendentes.
 - CI remoto desta branch aguarda push manual e abertura do PR. Testes locais não comprovam execução remota.
+- Atualização: serviço integrado pelo PR #9 com dois checks aprovados; base sincronizada em `5779eb3`. A pendência de envio acima é histórica.
+
+### Evidências do download de resultados
+
+- Branch: `feat/download-resultado`; base: `dev`, commit `5779eb3`. Objetivo: integrar serviço, resumo e acesso temporário ao ZIP. PR previsto para `dev`; nenhuma dependência pendente de outra feature.
+- `ResultadoTemporario` e migração `0001_initial` adicionados. Modelo não registra conteúdo nem nome do upload; guarda token, caminho e resumo mínimo. Aplicar `python manage.py migrate` antes de iniciar a aplicação.
+- Coordenação em `services/resultados.py`: diretório UUID privado, upload temporário e saída com nome fixo. Caminho de entrada nunca vem de parâmetro do cliente. A saída é persistida somente após organização completa; falhas descartam a área desta execução.
+- Rotas existentes preservadas; inclusão de resultados sob `/resultados/` no mesmo namespace `laboratorios`. Não foi criada API REST nem nova arquitetura.
+- `.venv/bin/python manage.py check`: sem problemas; testes Django e pytest: 98 passaram em cada suíte; `makemigrations --check --dry-run`: nenhuma mudança; `git diff --check`: sem problemas.
+- Testes de integração cobrem exemplo, inventário, upload original descartado, redirecionamento, atualização sem reprocessar, TTL configurável e fronteira exata, token desconhecido, arquivos ausentes, caminhos adulterados, links simbólicos, parâmetros ignorados, métodos HTTP, isolamento entre clientes, falhas de serviço/banco, escape de avisos e tipos de resultado incompatíveis. Testes antigos foram atualizados para o novo contrato. Ao consumir FileResponse integralmente no cliente Django, o iterador já fecha a resposta; retirado fechamento duplicado dos testes do exemplo público para compatibilidade com isolamento de banco do pytest.
+- Navegador local com banco e resultados isolados em `/tmp`: envio do ZIP fictício retornou 303, resumo mostrou seis arquivos e contagens 3/1/1/1; botão baixou ZIP íntegro, byte a byte igual ao gerado. Resultado expirado retornou página 410 sem link de download. Migração aplicada com sucesso nesse banco de demonstração, sem modificar o banco local do responsável.
+- Resumo conferido em desktop e mobile 390 × 844, sem rolagem horizontal no exemplo. Capturas locais `/tmp/autolab-download-desktop.png`, `/tmp/autolab-download-mobile.png` e `/tmp/autolab-download-expirado.png`, fora do Git. Verificação pontual; não constitui auditoria completa de acessibilidade.
+- Limpeza e agendamento não implementados nesta branch. A UI informa que expiração de acesso não é exclusão imediata. Catálogo continua em breve até concluir o ciclo de vida. CI remoto aguarda push manual.
