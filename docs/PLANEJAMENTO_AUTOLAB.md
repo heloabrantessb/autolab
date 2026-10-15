@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 14/10/2026  
-**Status:** implementação incremental em andamento: base Django, layout, dashboard, Django 5.2 LTS, CI, catálogo e página didática de Arquivos integrados em `dev`. Formulário e recebimento inicial de ZIP implementados na `feat/upload-arquivos`, aguardando envio e revisão. Inspeção segura e organização ainda não implementadas. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, página didática e recebimento ZIP integrados em `dev`. Inspeção ZIP implementada e validada na `feat/validacao-zip`, aguardando envio e revisão. Organização ainda não implementada. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Enviar `feat/upload-arquivos`, abrir PR para `dev`, confirmar o CI e revisar. Após integração autorizada, iniciar `feat/validacao-zip`: inspeção de estrutura, caminhos, tipos especiais, criptografia e limites de entradas/expansão, com testes de ZIP malicioso. Só depois conectar a organização, relatório, download e limpeza em branches próprias.
+Enviar `feat/validacao-zip`, abrir PR para `dev`, confirmar o CI e revisar. Após integração autorizada, iniciar `feat/organizacao-arquivos`: serviço isolado para classificação, nomes seguros sem sobrescrita, CSV rastreável e ZIP de saída. Downloads por token, expiração e limpeza continuam em entregas próprias.
 
 ---
 
@@ -355,6 +355,8 @@ Usar `reverse()` e `{% url %}` em templates; não espalhar URLs hardcoded. No MV
 ### 20.1 Formulário e validações
 
 Campo obrigatório `arquivo_zip` (`forms.FileField`), com ajuda textual: formato ZIP, tamanho máximo e tipos de conteúdo aceitos. Conferir limite por bytes reais recebidos, não somente extensão e `Content-Type`. Abrir via `zipfile.ZipFile` e capturar `BadZipFile`, `LargeZipFile` e erros de leitura. Rejeitar ZIP vazio, ZIP criptografado, entrada com caminho absoluto, `..`, barra invertida tratada como separador, drive Windows, entradas especiais e links simbólicos (quando metadados indicarem). Ignorar apenas entradas de diretório normais; não aceitar ZIP aninhado como algo a extrair recursivamente. Limitar número de entradas, tamanho descompactado anunciado e bytes realmente copiados; desconfiar dos metadados. Rejeitar entradas com mesmo caminho normalizado que causem ambiguidades.
+
+**Perfil implementado nesta primeira fatia:** ZIP comum com métodos Stored (0) ou Deflate (8), sem criptografia, ZIP64 ou múltiplos volumes. Outros métodos são recusados explicitamente para manter a leitura limitada. Diretórios normais contam no limite de entradas, mas não como arquivos no resumo. Metadados `__MACOSX`, `.DS_Store` e `Thumbs.db` são recusados, inclusive em subpastas; essa decisão resolve a pendência da seção 8.2. Nomes são comparados após normalização de separadores, Unicode NFC e casefold. ZIP aninhado pode ser um arquivo regular, mas seu conteúdo não é aberto recursivamente.
 
 ### 20.2 Mapeamento
 
@@ -545,7 +547,9 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 14/10/2026 | Integrado | Workflow de testes e modelo de PR integrados pelo PR #4; falha inicial de contexto corrigida; checks remotos aprovados |
 | 14/10/2026 | Integrado | Catalogo com seis laboratorios, niveis, resumos e disponibilidade; PR #5 integrado com dois checks aprovados; todas as automacoes permanecem em breve |
 | 14/10/2026 | Integrado | Pagina didatica de Arquivos com seis etapas e ZIP ficticio baixavel; PR #6 integrado com os dois checks aprovados |
-| 14/10/2026 | Implementado na feature | Formulario e POST de recebimento inicial de ZIP com CSRF, extensao e limite de bytes; sem inspecao, extracao, organizacao ou resultado persistido |
+| 14/10/2026 | Integrado | Formulario e POST de recebimento ZIP integrados pelo PR #7 com dois checks aprovados |
+| 14/10/2026 | Implementado na feature | Inspecao ZIP desacoplada de Django; limites de entradas e bytes reais, caminhos, tipos, CRC e cabecalhos; sem extracao ou escrita |
+| 14/10/2026 | Decisao tecnica | Primeiro perfil aceita Stored/Deflate; recusa ZIP64, criptografia, multiplos volumes, outros metodos e metadados de sistema; restricoes explicitas na UI e materiais |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
 ### Evidencias da entrega do dashboard
@@ -564,6 +568,7 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 
 ### Changelog
 
+- **14/10/2026 — validação ZIP:** pré-inspeção limitada do diretório central, inspeção de metadados e leitura limitada de Stored/Deflate com CRC. Formulário traduz erros de domínio; resumo exibe quantidade de arquivos sem gerar resultados. Upload integrado pelo PR #7.
 - **14/10/2026 — upload:** formulário ZIP e endpoint POST adicionados com validação inicial de extensão, arquivo vazio, quantidade e tamanho. Conferência de bytes lidos e estados de erro/recebimento na aba Executar. Página didática integrada pelo PR #6.
 - **14/10/2026 — página de Arquivos:** seis etapas Bootstrap, categorias, trecho Python comentado, exercício conceitual, desafio e resultado esperado. ZIP fictício versionado com download por rota fixa GET/HEAD, sem acesso a caminhos do cliente. Catálogo integrado pelo PR #5.
 - **14/10/2026 — catálogo:** catálogo completo com três módulos da primeira versão e três futuros; conteúdo estático em `core/catalogo.py`, card reutilizável e disponibilidade centralizada na home. Testes e verificações visuais desktop/mobile concluídos; sem processamento de automações.
@@ -586,7 +591,8 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [x] CI confirmado no GitHub e qualidade integrada pelo PR #4.
 - [x] Catálogo completo integrado em `dev` pelo PR #5.
 - [x] Página didática e ZIP de exemplo integrados em `dev` pelo PR #6.
-- [x] Formulário e recebimento inicial de ZIP implementados e testados na feature (envio e integração pendentes).
+- [x] Formulário e recebimento ZIP integrados em `dev` pelo PR #7.
+- [x] Inspeção ZIP implementada e testada na feature (envio e integração pendentes).
 - [ ] Laboratório de Arquivos implementado e testado.
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Devcontainer Codespaces validado.
@@ -667,3 +673,17 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Testes cobrem CSRF real, método, tamanho exato e acima do limite, bytes reais apesar de metadado menor, envios múltiplos, MIME não confiável, escape do nome e ausência de resultados persistidos.
 - Navegador local: envio do ZIP fictício aceito com confirmação correta; README enviado como arquivo inválido retornou erro de extensão e manteve a aba Executar ativa. Mobile 390 × 844 sem rolagem horizontal no estado aceito. Capturas locais `/tmp/autolab-upload-sucesso.png` e `/tmp/autolab-upload-erro-mobile.png`, não versionadas.
 - Catálogo mantém Arquivos como em breve. ZIPs corrompidos, criptografados, com caminhos maliciosos ou expansões abusivas ainda não são inspecionados; não extrair ou organizar até concluir `feat/validacao-zip`. CI remoto desta feature depende do push manual.
+- Atualização: upload integrado pelo PR #7 com dois checks aprovados; `dev` sincronizada em `6a02433`. A limitação de inspeção acima é histórica e foi tratada pela entrega seguinte.
+
+### Evidências da inspeção ZIP
+
+- Branch: `feat/validacao-zip`; base: `dev`, commit `6a02433`. Imagens locais não versionadas preservadas fora do diff.
+- Serviço `inspecionar_zip(entrada, limites)` em `laboratorios/services/zip_validator.py`, independente de Django, recebe fluxo binário seekable e limites explícitos; retorna caminhos normalizados e bytes reais. Exceções `ArquivoInvalido` e `LimiteExcedido` são convertidas em erros seguros do formulário.
+- Pré-inspeção de tamanho/EOCD/diretório central conta registros reais antes de `ZipFile` criar sua lista de entradas; recusa inconsistências e contagem falsificada. Depois valida nomes, tipos, flags, métodos, diretórios e tamanhos declarados antes de descompactar qualquer entrada.
+- Nenhuma extração ou escrita. Entradas são lidas em blocos limitados; Deflate usa `zlib.decompressobj` com máximo de saída por chamada e limites reais por entrada/total. Isso evita depender de leitura truncada pelo tamanho anunciado. CRC, EOF, tamanhos reais, cabeçalhos local/central e sobreposição são conferidos.
+- Dados descartados após a inspeção, sem abrir arquivos internos como programas ou renderizá-los. ZIPs aninhados não são inspecionados recursivamente. A validação não é antivírus e não identifica o formato real de cada documento.
+- Defaults mantidos: upload 10 MiB, 100 entradas incluindo diretórios, 50 MiB descompactados e 10 MiB por entrada. A view síncrona não garante limite rígido de CPU/tempo; limites HTTP, concorrência e timeout operacional permanecem nas entregas de infraestrutura.
+- `.venv/bin/python manage.py check`: sem problemas; testes Django e pytest: 69 passaram em cada suíte; migrações: nenhuma mudança; `git diff --check`: sem problemas.
+- Testes cobrem ZIP inválido/vazio, diretórios apenas, caminhos absolutos/Windows/UNC/travessia, caracteres de controle/NUL, duplicatas normalizadas, symlink/tipos especiais, metadados, criptografia, métodos recusados, múltiplos volumes e ZIP64. Também cobrem contagem falsa, tamanhos declarados/reais, limite acumulado, CRC, truncamento, cabeçalhos inconsistentes, sobreposição, data descriptor e arquivos válidos maiores que um bloco.
+- Navegador local: exemplo válido retornou 200 com seis arquivos; ZIP de teste com `../fora.txt` retornou 400 com erro compreensível, mantendo Executar ativa. Mobile 390 × 844 sem rolagem horizontal da página no estado de erro. Capturas locais `/tmp/autolab-zip-validado.png`, `/tmp/autolab-zip-rejeitado.png` e `/tmp/autolab-zip-rejeitado-mobile.png`, não versionadas.
+- Catálogo continua com automação em breve: esta entrega apenas inspeciona. Organização, relatório, saída, tokens, expiração e limpeza aguardam branches próprias. CI remoto da feature depende do push manual e da revisão.

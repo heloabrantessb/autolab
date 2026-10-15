@@ -1,8 +1,10 @@
-"""Formulários de entrada; inspeção de ZIP pertence à próxima entrega."""
+"""Formulários de entrada e tradução dos erros de inspeção ZIP."""
 
 from django import forms
 from django.conf import settings
 from django.core.validators import FileExtensionValidator
+
+from .services.zip_validator import ArquivoInvalido, LimiteExcedido, LimitesZIP, inspecionar_zip
 
 
 class UploadZIPForm(forms.Form):
@@ -24,9 +26,18 @@ class UploadZIPForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.limite_bytes = settings.MAX_ZIP_UPLOAD_BYTES
+        self.limites_zip = LimitesZIP(
+            upload_bytes=self.limite_bytes,
+            entradas=settings.MAX_ZIP_ENTRIES,
+            descompactado_bytes=settings.MAX_ZIP_UNCOMPRESSED_BYTES,
+            entrada_bytes=settings.MAX_ZIP_ENTRY_BYTES,
+        )
         self.fields["arquivo_zip"].help_text = (
             f"Envie um único ZIP de até {self.limite_bytes / (1024 * 1024):g} MiB. "
-            "Use o exemplo fictício para experimentar o envio."
+            f"Máximo de {self.limites_zip.entradas} entradas, "
+            f"{self.limites_zip.descompactado_bytes / (1024 * 1024):g} MiB descompactados "
+            f"e {self.limites_zip.entrada_bytes / (1024 * 1024):g} MiB por arquivo. "
+            "Use um ZIP Stored ou Deflate, sem senha e sem metadados de sistema."
         )
 
     def clean_arquivo_zip(self):
@@ -48,6 +59,11 @@ class UploadZIPForm(forms.Form):
             arquivo.seek(0)
         if total == 0:
             raise forms.ValidationError("O arquivo enviado está vazio.", code="empty")
+        try:
+            self.inspecao = inspecionar_zip(arquivo, self.limites_zip)
+        except ArquivoInvalido as exc:
+            codigo = "limite_excedido" if isinstance(exc, LimiteExcedido) else "zip_invalido"
+            raise forms.ValidationError(str(exc), code=codigo) from exc
         return arquivo
 
     def clean(self):

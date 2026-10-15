@@ -1,8 +1,8 @@
 {% if nome_recebido %}
   <div class="alert alert-info" role="status" aria-live="polite">
-    Envio recebido: <strong>{{ nome_recebido }}</strong>.
-    Apenas o nome e o tamanho foram conferidos. A estrutura do ZIP ainda não foi validada;
-    nenhum arquivo foi organizado e nenhum resultado foi gerado.
+    ZIP validado: <strong>{{ nome_recebido }}</strong> — {{ total_arquivos }} arquivo{{ total_arquivos|pluralize }}.
+    Estrutura, caminhos, integridade e limites de tamanho foram conferidos.
+    Nenhum arquivo foi organizado e nenhum resultado foi gerado.
   </div>
 {% endif %}
 {% if form.errors %}

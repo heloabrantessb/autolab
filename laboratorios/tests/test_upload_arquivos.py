@@ -2,6 +2,8 @@
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from io import BytesIO
+from zipfile import ZipFile
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, SimpleTestCase, override_settings
@@ -14,7 +16,15 @@ class TestUploadZIP(SimpleTestCase):
     def setUp(self):
         self.url = reverse("laboratorios:organizar_arquivos")
 
-    def upload(self, name="exemplo.zip", content=b"conteudo", **kwargs):
+    def zip_bytes(self):
+        buffer = BytesIO()
+        with ZipFile(buffer, "w") as archive:
+            archive.writestr("notas.txt", "Exemplo")
+        return buffer.getvalue()
+
+    def upload(self, name="exemplo.zip", content=None, **kwargs):
+        if content is None:
+            content = self.zip_bytes()
         return self.client.post(self.url, {
             "arquivo_zip": SimpleUploadedFile(name, content, **kwargs),
         })
@@ -26,10 +36,10 @@ class TestUploadZIP(SimpleTestCase):
         self.assertContains(response, 'name="arquivo_zip"')
         self.assertContains(response, "10 MiB")
 
-    def test_success_only_confirms_initial_checks(self):
+    def test_success_confirms_inspection_without_organization(self):
         response = self.upload()
-        self.assertContains(response, "Envio recebido:")
-        self.assertContains(response, "A estrutura do ZIP ainda não foi validada")
+        self.assertContains(response, "ZIP validado:")
+        self.assertContains(response, "Estrutura, caminhos, integridade e limites")
         self.assertContains(response, "nenhum resultado foi gerado")
         self.assertContains(response, 'class="tab-pane autolab-lab-panel active" id="arquivos-executar"')
 
@@ -48,10 +58,11 @@ class TestUploadZIP(SimpleTestCase):
                 self.assertContains(response, message, status_code=400)
                 self.assertContains(response, 'class="tab-pane autolab-lab-panel active" id="arquivos-executar"', status_code=400)
 
-    @override_settings(MAX_ZIP_UPLOAD_BYTES=4)
     def test_limit_accepts_exact_size_and_rejects_larger(self):
-        self.assertEqual(self.upload(content=b"1234").status_code, 200)
-        response = self.upload(content=b"12345")
+        data = self.zip_bytes()
+        with override_settings(MAX_ZIP_UPLOAD_BYTES=len(data)):
+            self.assertEqual(self.upload(content=data).status_code, 200)
+            response = self.upload(content=data + b"x")
         self.assertContains(response, "tamanho máximo", status_code=400)
 
     @override_settings(MAX_ZIP_UPLOAD_BYTES=4)
@@ -87,7 +98,7 @@ class TestUploadZIP(SimpleTestCase):
         token = client.cookies["csrftoken"].value
         response = client.post(self.url, {
             "csrfmiddlewaretoken": token,
-            "arquivo_zip": SimpleUploadedFile("exemplo.zip", b"a"),
+            "arquivo_zip": SimpleUploadedFile("exemplo.zip", self.zip_bytes()),
         })
         self.assertEqual(response.status_code, 200)
 

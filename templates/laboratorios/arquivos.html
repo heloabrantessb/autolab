@@ -8,7 +8,7 @@
   <p class="lead">Organize uma pasta de documentos misturados com Python e aprenda a gerar um inventário.</p>
   <p class="small text-muted">Nível: iniciante · Pré-requisitos: noções de arquivos, pastas e extensões · Duração sugerida: 20 minutos.</p>
   <div class="alert alert-info" role="status">
-    Conteúdo didático e envio inicial disponíveis. A organização de arquivos ainda não está disponível.
+    Conteúdo didático e validação de ZIP disponíveis. A organização de arquivos ainda não está disponível.
     O exercício executável e o ambiente Codespaces serão preparados em uma próxima entrega.
   </div>
 </header>
@@ -45,11 +45,11 @@
     <h2 class="h4">Executar: conheça a entrada</h2>
     <p>O exemplo contém seis arquivos fictícios: três documentos de texto, uma planilha CSV, uma imagem PNG e um arquivo sem extensão. Dois documentos têm o mesmo nome em pastas diferentes.</p>
     <a class="btn btn-outline-primary mb-3" href="{% url 'laboratorios:exemplo_arquivos' %}">Baixar ZIP de exemplo</a>
-    <p>Experimente o envio do ZIP. Nesta etapa, somente o nome e o tamanho são conferidos; o conteúdo não é organizado e não fica salvo como resultado.</p>
+    <p>Envie o ZIP fictício para conferir sua estrutura, caminhos, integridade e limites. Os arquivos ainda não serão organizados nem salvos como resultado.</p>
     {% include "partials/upload_form.html" %}
     <p>Na demonstração completa, você visualizará as contagens e baixará os arquivos organizados com o inventário.</p>
     <button class="btn btn-secondary" type="button" disabled>Organização no site em breve</button>
-    <p class="small text-muted mt-2">A inspeção segura da estrutura do ZIP e o processamento serão disponibilizados nas próximas etapas.</p>
+    <p class="small text-muted mt-2">A validação não é antivírus nem comprova o formato real dos documentos. ZIPs dentro do ZIP não são abertos recursivamente. Metadados como __MACOSX, .DS_Store e Thumbs.db devem ser removidos antes do envio.</p>
   </section>
 
   <section class="tab-pane autolab-lab-panel" id="arquivos-codigo" role="tabpanel" aria-labelledby="arquivos-codigo-tab" tabindex="0">

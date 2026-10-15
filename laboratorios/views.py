@@ -27,12 +27,14 @@ def arquivos(request):
 
 @require_POST
 def organizar_arquivos(request):
-    """Recebe e confere o upload; ainda não inspeciona ou organiza ZIPs."""
+    """Recebe e inspeciona o ZIP; a organização permanece na próxima entrega."""
     form = UploadZIPForm(request.POST, request.FILES)
     nome_recebido = None
+    total_arquivos = None
     status = 400
     if form.is_valid():
         nome_recebido = form.cleaned_data["arquivo_zip"].name
+        total_arquivos = len(form.inspecao.caminhos)
         status = 200
         form = UploadZIPForm()
     return render(request, "laboratorios/arquivos.html", {
@@ -40,6 +42,7 @@ def organizar_arquivos(request):
         "etapa_ativa": "executar",
         "form": form,
         "nome_recebido": nome_recebido,
+        "total_arquivos": total_arquivos,
     }, status=status)
 
 
