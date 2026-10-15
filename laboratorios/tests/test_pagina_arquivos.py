@@ -28,7 +28,7 @@ class TestPaginaArquivos(SimpleTestCase):
 
     def test_page_distinguishes_reference_from_execution(self):
         response = self.client.get(reverse("laboratorios:arquivos"))
-        self.assertContains(response, "A organização de arquivos ainda não está disponível.")
+        self.assertContains(response, "Envie um ZIP para organizar os arquivos")
         self.assertContains(response, "Esta é uma referência didática, não o resultado de uma execução.")
         self.assertContains(response, "Exercício no Codespaces em breve")
         self.assertContains(response, '<input type="file"')
@@ -42,7 +42,6 @@ class TestPaginaArquivos(SimpleTestCase):
         self.assertIn('attachment;', response["Content-Disposition"])
         self.assertIn('autolab-arquivos-exemplo.zip', response["Content-Disposition"])
         data = b"".join(response.streaming_content)
-        response.close()
         with ZipFile(BytesIO(data)) as archive:
             self.assertIsNone(archive.testzip())
             self.assertEqual(set(archive.namelist()), {
@@ -56,7 +55,6 @@ class TestPaginaArquivos(SimpleTestCase):
     def test_download_ignores_client_supplied_path(self):
         response = self.client.get(reverse("laboratorios:exemplo_arquivos"), {"arquivo": "../.env"})
         data = b"".join(response.streaming_content)
-        response.close()
         with ZipFile(BytesIO(data)) as archive:
             self.assertEqual(len(archive.namelist()), 6)
             self.assertNotIn(".env", archive.namelist())

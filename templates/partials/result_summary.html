@@ -1,0 +1,18 @@
+<div role="status" aria-live="polite">
+  <h2 class="h4">Arquivos organizados</h2>
+  <p>Total: <strong>{{ resultado.total_arquivos }} arquivo{{ resultado.total_arquivos|pluralize }}</strong>.</p>
+</div>
+<dl class="row">
+  {% for categoria, quantidade in resultado.por_categoria.items %}
+    <dt class="col-8 col-sm-4">{{ categoria }}</dt><dd class="col-4 col-sm-8">{{ quantidade }}</dd>
+  {% endfor %}
+</dl>
+{% if resultado.avisos %}
+  <h3 class="h5">Ajustes nos nomes</h3>
+  <ul class="text-break">{% for aviso in resultado.avisos %}<li>{{ aviso }}</li>{% endfor %}</ul>
+{% endif %}
+<p>O ZIP inclui os arquivos separados por categoria e o inventário <code>relatorio.csv</code>.</p>
+<a class="btn btn-primary mb-3" href="{% url 'laboratorios:download_resultado' resultado.token %}">Baixar ZIP organizado</a>
+<p>Disponível até <strong>{{ resultado.expires_at|date:"d/m/Y H:i:s T" }}</strong>. Quem tiver este link poderá acessar o resultado até esse horário. Evite compartilhá-lo.</p>
+<p class="small text-muted">O upload original já foi descartado. O prazo limita o acesso ao download e não representa exclusão imediata dos arquivos.</p>
+<a class="btn btn-outline-primary" href="{% url 'laboratorios:arquivos' %}">Organizar outro ZIP</a>

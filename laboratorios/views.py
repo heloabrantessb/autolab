@@ -1,11 +1,18 @@
 """Views dos laboratorios de automacao."""
 
 from django.conf import settings
-from django.http import FileResponse, Http404
+from django.db import DatabaseError
+from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import render
+from django.urls import reverse
+from django.utils import timezone
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST, require_safe
 
 from .forms import UploadZIPForm
+from .models import ResultadoTemporario
+from .services.resultados import caminho_resultado, criar_resultado
+from .services.zip_validator import ArquivoInvalido
 
 
 ETAPAS_ARQUIVOS = (
@@ -26,24 +33,78 @@ def arquivos(request):
 
 
 @require_POST
+@never_cache
 def organizar_arquivos(request):
-    """Recebe e inspeciona o ZIP; a organização permanece na próxima entrega."""
+    """Valida, organiza e redireciona para evitar reenvio ao atualizar."""
     form = UploadZIPForm(request.POST, request.FILES)
-    nome_recebido = None
-    total_arquivos = None
     status = 400
     if form.is_valid():
-        nome_recebido = form.cleaned_data["arquivo_zip"].name
-        total_arquivos = len(form.inspecao.caminhos)
-        status = 200
-        form = UploadZIPForm()
+        try:
+            resultado = criar_resultado(form.cleaned_data["arquivo_zip"], form.limites_zip)
+        except ArquivoInvalido as exc:
+            form.add_error("arquivo_zip", str(exc))
+        except (OSError, DatabaseError):
+            form.add_error(None, "Não foi possível gerar o resultado agora. Tente novamente mais tarde.")
+            status = 503
+        else:
+            return HttpResponse(status=303, headers={
+                "Location": reverse("laboratorios:resultado", kwargs={"token": resultado.token}),
+            })
     return render(request, "laboratorios/arquivos.html", {
         "etapas": ETAPAS_ARQUIVOS,
         "etapa_ativa": "executar",
         "form": form,
-        "nome_recebido": nome_recebido,
-        "total_arquivos": total_arquivos,
     }, status=status)
+
+
+def _obter_resultado(token):
+    return ResultadoTemporario.objects.filter(token=token, kind="arquivos").first()
+
+
+def _indisponivel(request, expirado=False):
+    return render(request, "laboratorios/resultado_indisponivel.html", {
+        "expirado": expirado,
+    }, status=410 if expirado else 404)
+
+
+@require_safe
+@never_cache
+def resultado(request, token):
+    registro = _obter_resultado(token)
+    if registro is None:
+        return _indisponivel(request)
+    if registro.expires_at <= timezone.now():
+        return _indisponivel(request, expirado=True)
+    try:
+        caminho_resultado(registro)
+    except OSError:
+        return _indisponivel(request)
+    response = render(request, "laboratorios/arquivos.html", {
+        "etapas": ETAPAS_ARQUIVOS, "etapa_ativa": "resultado",
+        "form": UploadZIPForm(), "resultado": registro,
+    })
+    response["Referrer-Policy"] = "no-referrer"
+    return response
+
+
+@require_safe
+@never_cache
+def download_resultado(request, token):
+    registro = _obter_resultado(token)
+    if registro is None:
+        return _indisponivel(request)
+    if registro.expires_at <= timezone.now():
+        return _indisponivel(request, expirado=True)
+    try:
+        arquivo = caminho_resultado(registro).open("rb")
+    except OSError:
+        return _indisponivel(request)
+    response = FileResponse(
+        arquivo, as_attachment=True, filename="autolab-arquivos-organizados.zip",
+        content_type="application/zip",
+    )
+    response["Referrer-Policy"] = "no-referrer"
+    return response
 
 
 @require_safe

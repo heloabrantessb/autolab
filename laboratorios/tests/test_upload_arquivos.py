@@ -6,15 +6,22 @@ from io import BytesIO
 from zipfile import ZipFile
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import Client, SimpleTestCase, override_settings
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from laboratorios.forms import UploadZIPForm
+from laboratorios.models import ResultadoTemporario
 
 
-class TestUploadZIP(SimpleTestCase):
+class TestUploadZIP(TestCase):
     def setUp(self):
         self.url = reverse("laboratorios:organizar_arquivos")
+        area = TemporaryDirectory()
+        self.addCleanup(area.cleanup)
+        self.raiz = Path(area.name)
+        settings = override_settings(RESULTS_ROOT=self.raiz)
+        settings.enable()
+        self.addCleanup(settings.disable)
 
     def zip_bytes(self):
         buffer = BytesIO()
@@ -36,16 +43,17 @@ class TestUploadZIP(SimpleTestCase):
         self.assertContains(response, 'name="arquivo_zip"')
         self.assertContains(response, "10 MiB")
 
-    def test_success_confirms_inspection_without_organization(self):
+    def test_success_redirects_to_organized_result(self):
         response = self.upload()
-        self.assertContains(response, "ZIP validado:")
-        self.assertContains(response, "Estrutura, caminhos, integridade e limites")
-        self.assertContains(response, "nenhum resultado foi gerado")
-        self.assertContains(response, 'class="tab-pane autolab-lab-panel active" id="arquivos-executar"')
+        self.assertEqual(response.status_code, 303)
+        response = self.client.get(response["Location"])
+        self.assertContains(response, "Arquivos organizados")
+        self.assertContains(response, "1 arquivo")
+        self.assertContains(response, 'class="tab-pane autolab-lab-panel active" id="arquivos-resultado"')
 
     def test_uppercase_extension_and_untrusted_mime(self):
         response = self.upload("exemplo.ZIP", content_type="text/plain")
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 303)
 
     def test_missing_empty_and_wrong_extension(self):
         responses = (
@@ -61,7 +69,7 @@ class TestUploadZIP(SimpleTestCase):
     def test_limit_accepts_exact_size_and_rejects_larger(self):
         data = self.zip_bytes()
         with override_settings(MAX_ZIP_UPLOAD_BYTES=len(data)):
-            self.assertEqual(self.upload(content=data).status_code, 200)
+            self.assertEqual(self.upload(content=data).status_code, 303)
             response = self.upload(content=data + b"x")
         self.assertContains(response, "tamanho máximo", status_code=400)
 
@@ -100,14 +108,15 @@ class TestUploadZIP(SimpleTestCase):
             "csrfmiddlewaretoken": token,
             "arquivo_zip": SimpleUploadedFile("exemplo.zip", self.zip_bytes()),
         })
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 303)
 
-    def test_upload_does_not_persist_results(self):
-        with TemporaryDirectory() as directory, override_settings(RESULTS_ROOT=Path(directory)):
-            self.assertEqual(self.upload().status_code, 200)
-            self.assertEqual(list(Path(directory).iterdir()), [])
+    def test_upload_only_persists_output_and_metadata(self):
+        self.assertEqual(self.upload().status_code, 303)
+        result = ResultadoTemporario.objects.get()
+        self.assertEqual([p.relative_to(self.raiz).as_posix() for p in self.raiz.rglob("*") if p.is_file()], [result.relative_path])
 
-    def test_filename_is_escaped(self):
+    def test_upload_name_is_not_used_as_path_or_echoed(self):
         response = self.upload("<script>.zip")
-        self.assertContains(response, "&lt;script&gt;.zip")
+        response = self.client.get(response["Location"])
         self.assertNotContains(response, "<script>.zip")
+        self.assertFalse(any("script" in str(p) for p in self.raiz.rglob("*")))

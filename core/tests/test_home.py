@@ -80,7 +80,7 @@ class TestHomePage(SimpleTestCase):
     def test_navigation_targets_show_preparation_state(self):
         """Destinos existentes usam layout e deixam as pendencias explicitas."""
         for route, template, message in (
-            ("laboratorios:arquivos", "laboratorios/arquivos.html", "A organização de arquivos ainda não está disponível."),
+            ("laboratorios:arquivos", "laboratorios/arquivos.html", "Envie um ZIP para organizar os arquivos"),
             ("exercicios:lista", "exercicios/lista.html", "Os exercícios e o ambiente Codespaces ainda estão em preparação."),
         ):
             with self.subTest(route=route):

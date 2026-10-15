@@ -103,6 +103,23 @@ python manage.py runserver
 
 Acesse [http://127.0.0.1:8000/](http://127.0.0.1:8000/) no seu navegador.
 
+### Resultados temporários de Arquivos
+
+Após aplicar as migrações, a página `/laboratorios/arquivos/` recebe o ZIP,
+organiza os arquivos e redireciona para um resumo com download. O material
+fictício está em `materials/arquivos/exemplo.zip`.
+
+`RESULTS_ROOT` deve ficar fora de diretórios públicos de static/media. Cada
+resultado usa uma área privada por UUID e um link que permite acesso a quem
+o possuir, sem login. `RESULT_TTL_MINUTES` deve ser positivo (default: 30).
+O upload original é descartado após processamento; o ZIP organizado e os
+metadados permanecem até a limpeza. Expirar bloqueia novos acessos, sem
+interromper downloads já iniciados.
+
+O comando de limpeza e seu agendamento externo serão preparados na próxima
+entrega. Esta versão ainda não realiza exclusão periódica dos resultados;
+o catálogo mantém a automação em breve até concluir esse ciclo de vida.
+
 ---
 
 ## 📐 Padrões de Contribuição

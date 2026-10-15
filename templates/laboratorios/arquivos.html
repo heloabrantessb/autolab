@@ -8,7 +8,7 @@
   <p class="lead">Organize uma pasta de documentos misturados com Python e aprenda a gerar um inventário.</p>
   <p class="small text-muted">Nível: iniciante · Pré-requisitos: noções de arquivos, pastas e extensões · Duração sugerida: 20 minutos.</p>
   <div class="alert alert-info" role="status">
-    Conteúdo didático e validação de ZIP disponíveis. A organização de arquivos ainda não está disponível.
+    Envie um ZIP para organizar os arquivos por extensão e baixar o inventário.
     O exercício executável e o ambiente Codespaces serão preparados em uma próxima entrega.
   </div>
 </header>
@@ -42,13 +42,11 @@
   </section>
 
   <section class="tab-pane autolab-lab-panel{% if etapa_ativa == 'executar' %} active{% endif %}" id="arquivos-executar" role="tabpanel" aria-labelledby="arquivos-executar-tab" tabindex="0">
-    <h2 class="h4">Executar: conheça a entrada</h2>
+    <h2 class="h4">Executar: organizar arquivos</h2>
     <p>O exemplo contém seis arquivos fictícios: três documentos de texto, uma planilha CSV, uma imagem PNG e um arquivo sem extensão. Dois documentos têm o mesmo nome em pastas diferentes.</p>
     <a class="btn btn-outline-primary mb-3" href="{% url 'laboratorios:exemplo_arquivos' %}">Baixar ZIP de exemplo</a>
-    <p>Envie o ZIP fictício para conferir sua estrutura, caminhos, integridade e limites. Os arquivos ainda não serão organizados nem salvos como resultado.</p>
+    <p>Envie o ZIP fictício para validar e organizar os arquivos. Ao concluir, você verá as contagens e poderá baixar o ZIP organizado com o inventário.</p>
     {% include "partials/upload_form.html" %}
-    <p>Na demonstração completa, você visualizará as contagens e baixará os arquivos organizados com o inventário.</p>
-    <button class="btn btn-secondary" type="button" disabled>Organização no site em breve</button>
     <p class="small text-muted mt-2">A validação não é antivírus nem comprova o formato real dos documentos. ZIPs dentro do ZIP não são abertos recursivamente. Metadados como __MACOSX, .DS_Store e Thumbs.db devem ser removidos antes do envio.</p>
   </section>
 
@@ -99,7 +97,10 @@ print(categoria("clientes.csv"))  # Planilhas</code></pre>
     <p>Dica: contar apenas os nomes não basta; compare também o conteúdo dos dois documentos. A validação automatizada virá com os testes locais do exercício, sem executar código de participantes no servidor.</p>
   </section>
 
-  <section class="tab-pane autolab-lab-panel" id="arquivos-resultado" role="tabpanel" aria-labelledby="arquivos-resultado-tab" tabindex="0">
+  <section class="tab-pane autolab-lab-panel{% if etapa_ativa == 'resultado' %} active{% endif %}" id="arquivos-resultado" role="tabpanel" aria-labelledby="arquivos-resultado-tab" tabindex="0">
+    {% if resultado %}
+      {% include "partials/result_summary.html" %}
+    {% else %}
     <h2 class="h4">Resultado esperado</h2>
     <p>Esta é uma referência didática, não o resultado de uma execução. Para o ZIP de exemplo, a organização deverá produzir:</p>
     <pre class="bg-light border rounded p-3"><code>arquivos_organizados.zip
@@ -119,7 +120,8 @@ print(categoria("clientes.csv"))  # Planilhas</code></pre>
       <li>O relatório contém uma linha por arquivo e permite rastrear seu caminho original.</li>
     </ul>
     <p>Erros comuns: esquecer arquivos sem extensão, tratar <code>.JPG</code> como uma categoria diferente e perder um documento por colisão de nomes.</p>
-    <button class="btn btn-secondary" type="button" disabled>Download de resultado em breve</button>
+    <p>Envie o ZIP na etapa Executar para gerar seu resultado e o link de download.</p>
+    {% endif %}
   </section>
 </div>
 {% endblock %}
