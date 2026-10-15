@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 15/10/2026
-**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, página didática, recebimento, inspeção e serviço de organização ZIP integrados em `dev`. Resumo web, download por token e bloqueio por expiração implementados na `feat/download-resultado`, aguardando envio e revisão. Limpeza, exercícios e Codespaces ainda pendentes. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo e fluxo web de Arquivos até download/expiração integrados em `dev`. Limpeza de expirados e disponibilidade de Arquivos no catálogo implementadas na `feat/limpeza-resultados`, aguardando envio e revisão. Exercícios e Codespaces ainda pendentes; agendamento externo da limpeza necessário antes da oficina. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Enviar `feat/download-resultado`, abrir PR para `dev`, confirmar o CI e revisar. Após integração, iniciar `feat/limpeza-resultados`: comando com simulação e remoção isolada de resultados expirados, testes e instruções de agendamento externo. Depois seguem exercício e Codespaces, Planilhas, IA controlada e preparação para publicação. A autorização de 15/10/2026 permite seguir essas etapas sem nova aprovação a cada branch, parando quando houver decisão pendente ou ação externa necessária. Push manual permanece a cargo do responsável. Organização integrada pelo PR #9.
+Enviar `feat/limpeza-resultados`, abrir PR para `dev`, confirmar o CI e revisar. Após integração, iniciar `feat/exercicio-organizacao`: script-base Python com TODOs, materiais fictícios, instruções, desafio e testes locais, sem executar código de participantes no servidor. Depois seguem Codespaces, Planilhas, IA controlada e preparação para publicação. A autorização de 15/10/2026 permite seguir essas etapas sem nova aprovação a cada branch, parando quando houver decisão pendente ou ação externa necessária. Push manual permanece a cargo do responsável. Download integrado pelo PR #10. Agendamento externo da limpeza precisa ser configurado e validado antes da oficina, conforme `docs/OPERACAO_RESULTADOS.md`.
 
 ---
 
@@ -403,7 +403,9 @@ Criar `RESULTS_ROOT` fora de static/media pública. Para cada execução usar UU
 
 **Implementado na entrega de download:** modelo SQLite com migração, UUID4, caminho relativo canônico, criação/expiração, tipo e resumo (contagens e avisos). Nome do upload não é persistido nem usado como caminho; campos de resumo permitem POST/Redirect/GET sem guardar o arquivo original ou depender de sessão. POST válido responde 303 para a página de resumo; atualizar essa página não processa novamente. Upload inválido retorna 400; falha de armazenamento retorna 503 com mensagem segura. O upload original é descartado ao terminar a organização. Falhas de processamento ou gravação dos metadados removem somente a área recém-criada.
 
-Resumo e download aceitam GET/HEAD e usam `Cache-Control: no-store`; em sucesso também usam `Referrer-Policy: no-referrer`. Token inexistente, tipo diferente, arquivo ausente, caminho adulterado ou link simbólico retornam 404; prazo atingido retorna 410. A área usa caminho `<token>/arquivos_organizados.zip`, fora de static/media. `RESULT_TTL_MINUTES` positivo mantém default de 30 minutos, contado após o processamento. O prazo bloqueia novos acessos e não interrompe um download já iniciado. Não há exclusão automática nesta branch; o comando de limpeza será entregue em seguida, com agendamento externo necessário antes da oficina. O catálogo permanece em breve até completar esse ciclo de vida.
+Resumo e download aceitam GET/HEAD e usam `Cache-Control: no-store`; em sucesso também usam `Referrer-Policy: no-referrer`. Token inexistente, tipo diferente, arquivo ausente, caminho adulterado ou link simbólico retornam 404; prazo atingido retorna 410. A área usa caminho `<token>/arquivos_organizados.zip`, fora de static/media. `RESULT_TTL_MINUTES` positivo mantém default de 30 minutos, contado após o processamento. O prazo bloqueia novos acessos e não interrompe um download já iniciado. Na entrega de download, a exclusão periódica e a liberação do catálogo ficaram para a entrega de limpeza descrita a seguir.
+
+**Atualização na entrega de limpeza:** `python manage.py limpar_resultados` remove saídas e metadados expirados de Arquivos, com `--dry-run`, consultas em lotes e validação de caminho/tipo/prazo. Arquivo ou diretório ausente permite concluir a limpeza dos metadados. Links, conteúdo inesperado e caminhos adulterados são preservados com erro; falhas em uma execução não impedem tratar as demais. Áreas sem registro não são varridas, protegendo processamento em andamento; interrupções abruptas podem exigir manutenção controlada. Catálogo e home passam a oferecer Arquivos. Agendamento externo ainda não ativado: executar a cada cinco minutos, sem sobreposição, e conferir antes da oficina. Prazo de acesso e momento de remoção física são distintos; política e recuperação estão em `docs/OPERACAO_RESULTADOS.md`.
 
 ### 20.6 Exemplo de saída
 
@@ -566,6 +568,8 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 15/10/2026 | Implementado na feature | Serviço de organização por extensão com nomes seguros, colisões sem sobrescrita, inventário CSV e ZIP isolado; integração web em entrega posterior |
 | 15/10/2026 | Integrado | Organização integrada pelo PR #9 com dois checks aprovados; `dev` sincronizada em `5779eb3` |
 | 15/10/2026 | Implementado na feature | Resumo e download temporário com token, POST/Redirect/GET e expiração; limpeza ainda em entrega própria |
+| 15/10/2026 | Integrado | Download integrado pelo PR #10 com dois checks aprovados; `dev` sincronizada em `52378b3` |
+| 15/10/2026 | Implementado na feature | Comando de limpeza de expirados com simulação, lotes e recuperação de falhas; Arquivos disponível no catálogo; agendamento externo pendente |
 | 14/10/2026 | Decisao tecnica | Primeiro perfil aceita Stored/Deflate; recusa ZIP64, criptografia, multiplos volumes, outros metodos e metadados de sistema; restricoes explicitas na UI e materiais |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
@@ -585,6 +589,7 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 
 ### Changelog
 
+- **15/10/2026 — limpeza de resultados:** comando de remoção restrita de expirados com modo de simulação, revalidação e testes de falhas. Fluxo de Arquivos habilitado no catálogo/home; operação e exemplo de agendamento documentados, sem instalar cron. Download integrado pelo PR #10.
 - **15/10/2026 — download de resultados:** view conectada à organização, metadados temporários com migração, resumo após redirecionamento e download com validação de token/caminho/prazo. Upload descartado ao concluir; limpeza periódica pendente. Organização integrada pelo PR #9.
 - **15/10/2026 — organização de arquivos:** serviço Python independente de Django gera categorias, inventário e ZIP em diretório exclusivo. Cópia limitada reutiliza o leitor da validação; erros eliminam a saída parcial. Validação integrada pelo PR #8; fluxo web de resultados permanece pendente.
 - **14/10/2026 — validação ZIP:** pré-inspeção limitada do diretório central, inspeção de metadados e leitura limitada de Stored/Deflate com CRC. Formulário traduz erros de domínio; resumo exibe quantidade de arquivos sem gerar resultados. Upload integrado pelo PR #7.
@@ -613,9 +618,10 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [x] Formulário e recebimento ZIP integrados em `dev` pelo PR #7.
 - [x] Inspeção ZIP implementada, testada e integrada em `dev` pelo PR #8.
 - [x] Serviço de organização e inventário implementado, testado e integrado pelo PR #9.
-- [x] Resumo, download por token e bloqueio por expiração implementados e testados na feature (envio e integração pendentes).
-- [ ] Limpeza de resultados expirados implementada e agendada externamente.
-- [ ] Laboratório de Arquivos implementado e testado.
+- [x] Resumo, download por token e bloqueio por expiração integrados pelo PR #10.
+- [x] Comando de limpeza implementado e testado na feature (envio e integração pendentes).
+- [ ] Limpeza agendada e validada externamente antes da oficina.
+- [x] Fluxo web do Laboratório de Arquivos implementado e testado; última entrega de limpeza ainda aguarda integração.
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Devcontainer Codespaces validado.
 - [ ] Laboratório de IA implementado e testado.
@@ -734,3 +740,16 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Navegador local com banco e resultados isolados em `/tmp`: envio do ZIP fictício retornou 303, resumo mostrou seis arquivos e contagens 3/1/1/1; botão baixou ZIP íntegro, byte a byte igual ao gerado. Resultado expirado retornou página 410 sem link de download. Migração aplicada com sucesso nesse banco de demonstração, sem modificar o banco local do responsável.
 - Resumo conferido em desktop e mobile 390 × 844, sem rolagem horizontal no exemplo. Capturas locais `/tmp/autolab-download-desktop.png`, `/tmp/autolab-download-mobile.png` e `/tmp/autolab-download-expirado.png`, fora do Git. Verificação pontual; não constitui auditoria completa de acessibilidade.
 - Limpeza e agendamento não implementados nesta branch. A UI informa que expiração de acesso não é exclusão imediata. Catálogo continua em breve até concluir o ciclo de vida. CI remoto aguarda push manual.
+- Atualização: download integrado pelo PR #10 com dois checks aprovados; base sincronizada em `52378b3`. A pendência de envio acima é histórica.
+
+### Evidências da limpeza de resultados
+
+- Branch: `feat/limpeza-resultados`; base: `dev`, commit `52378b3`. PR previsto para `dev`; depende do download já integrado pelo PR #10.
+- Comando `limpar_resultados` e serviço `services/limpeza.py`: `--dry-run`, lotes por UUID com cursor para não pular registros apagados, corte de expiração fixo e revalidação por registro. Remove somente ZIP canônico e diretório vazio; depois remove metadados. Sem varredura de áreas desconhecidas ou exclusão recursiva genérica.
+- Falhas de arquivo/banco preservam metadados para nova tentativa, permitem continuar com outras execuções e resultam em código de erro para o agendador. SQLite exige agendamento sem sobreposição; não se presume bloqueio de linha de `select_for_update` nesse banco.
+- Catálogo e home habilitam somente Arquivos; outros cinco módulos continuam em breve. Textos de disponibilidade ajustados ao estado real. Exercícios e Codespaces ainda em preparação.
+- `.venv/bin/python manage.py check`: sem problemas; testes Django e pytest: 112 passaram em cada suíte; `makemigrations --check --dry-run`: nenhuma mudança; `git diff --check`: sem problemas.
+- Quatorze testes novos cobrem expiração, simulação, arquivo/área ausente, repetição, lotes, tamanho inválido, caminhos adulterados, links, conteúdo desconhecido, áreas sem registro, fronteira de prazo/revalidação e falhas de arquivo/banco com recuperação. Testes de disponibilidade atualizados.
+- Demonstração em banco e arquivos temporários isolados: dois resultados gerados com o material fictício; um expirado. Simulação retornou `Elegíveis: 1` e preservou ambos; execução retornou `Removidos: 1` preservando bytes do válido; repetição retornou `Removidos: 0`.
+- Navegador local: catálogo mostrou Arquivos disponível, cinco módulos em breve e acesso ao laboratório funcionando. Captura `/tmp/autolab-catalogo-arquivos-disponivel.png`, fora do Git. Servidor de teste encerrado após verificação.
+- `docs/OPERACAO_RESULTADOS.md` descreve retenção, falhas, áreas sem registro e exemplo de cron com exclusão mútua. Nenhum agendador foi configurado; ativação e verificação dependem do ambiente da oficina/publicação. CI remoto desta branch aguarda push manual.
