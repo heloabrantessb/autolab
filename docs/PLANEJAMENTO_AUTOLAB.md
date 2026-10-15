@@ -1,8 +1,8 @@
 # AutoLab — Planejamento e Especificação Técnica
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
-**Data:** 14/10/2026  
-**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, página didática e recebimento ZIP integrados em `dev`. Inspeção ZIP implementada e validada na `feat/validacao-zip`, aguardando envio e revisão. Organização ainda não implementada. Este documento é a fonte de verdade para implementação.
+**Data:** 15/10/2026
+**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, página didática, recebimento e inspeção ZIP integrados em `dev`. Serviço de organização implementado e validado na `feat/organizacao-arquivos`, aguardando envio e revisão. Conexão à view, download e ciclo de vida dos resultados ainda pendentes. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Enviar `feat/validacao-zip`, abrir PR para `dev`, confirmar o CI e revisar. Após integração autorizada, iniciar `feat/organizacao-arquivos`: serviço isolado para classificação, nomes seguros sem sobrescrita, CSV rastreável e ZIP de saída. Downloads por token, expiração e limpeza continuam em entregas próprias.
+Enviar `feat/organizacao-arquivos`, abrir PR para `dev`, confirmar o CI e revisar. Após integração autorizada, iniciar `feat/download-resultado`: conectar o serviço à view, retornar resumo e disponibilizar ZIP por token com expiração. Limpeza programada e exercícios continuam em entregas próprias. Validação ZIP integrada pelo PR #8.
 
 ---
 
@@ -392,6 +392,10 @@ def organizar_zip(entrada: Path, diretorio_trabalho: Path) -> ResultadoOrganizac
 
 A view trata formulário, mensagens, token de download e status HTTP; o serviço trata exclusivamente regras de domínio. Exceções de domínio devem ser específicas (ex.: `ArquivoInvalido`, `LimiteExcedido`) e traduzidas para mensagens seguras ao usuário. Nunca exibir traceback na UI.
 
+**Contrato implementado:** `organizar_zip(entrada, diretorio_trabalho, *, limites: LimitesZIP)` exige limites explícitos, sem importar settings Django. A área de trabalho deve existir e ser controlada pelo chamador; cada execução cria nela um subdiretório privado exclusivo e retorna o ZIP gerado. A entrada é inspecionada integralmente antes de criar a saída e copiada em blocos diretamente para o novo ZIP, sem extração em disco. Limites reais e integridade são conferidos também na cópia. Falhas descartam somente a execução incompleta; o chamador gerencia a retenção das saídas concluídas.
+
+Nomes de saída usam Unicode NFC, substituem caracteres especiais e nomes reservados do Windows e ficam limitados a 200 bytes UTF-8, com extensão de até 32 bytes. Colisões incluem nomes gerados por sufixos anteriores. O CSV registra caminho original, caminho relativo completo de saída, categoria e status `organizado`/`renomeado`; células com prefixos de fórmula recebem apóstrofo, inclusive após espaços iniciais. Classificação usa a extensão original, sem inspecionar o formato real. Ordem de entradas e datas internas fixas tornam o ZIP reproduzível no ambiente testado.
+
 ### 20.5 Resultados temporários
 
 Criar `RESULTS_ROOT` fora de static/media pública. Para cada execução usar UUID aleatório e diretório isolado; manter metadados mínimos (`token`, `arquivo`, `criado_em`, `expira_em`) em SQLite ou manifesto protegido no servidor. Escolha recomendada: modelo `ResultadoTemporario` com UUID como chave pública, path relativo, criação e expiração; não armazenar caminho absoluto fornecido pelo cliente. Download via view que valida token, prazo, existência e localização sob `RESULTS_ROOT`, usando `FileResponse` com `Content-Disposition: attachment`; `Cache-Control: no-store`. Rotina de limpeza por management command (`python manage.py limpar_resultados`) e agendamento externo; **não** depender de cron dentro do processo web. Garantir que exclusão não afete arquivos de outra execução. Para MVP sem login, quem possuir o link de resultado pode baixá-lo até expirar; informar isso e usar token imprevisível.
@@ -549,6 +553,8 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 14/10/2026 | Integrado | Pagina didatica de Arquivos com seis etapas e ZIP ficticio baixavel; PR #6 integrado com os dois checks aprovados |
 | 14/10/2026 | Integrado | Formulario e POST de recebimento ZIP integrados pelo PR #7 com dois checks aprovados |
 | 14/10/2026 | Implementado na feature | Inspecao ZIP desacoplada de Django; limites de entradas e bytes reais, caminhos, tipos, CRC e cabecalhos; sem extracao ou escrita |
+| 15/10/2026 | Integrado | Inspeção ZIP integrada pelo PR #8 com dois checks aprovados; `dev` sincronizada em `5ffb3ff` |
+| 15/10/2026 | Implementado na feature | Serviço de organização por extensão com nomes seguros, colisões sem sobrescrita, inventário CSV e ZIP isolado; integração web em entrega posterior |
 | 14/10/2026 | Decisao tecnica | Primeiro perfil aceita Stored/Deflate; recusa ZIP64, criptografia, multiplos volumes, outros metodos e metadados de sistema; restricoes explicitas na UI e materiais |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
@@ -568,6 +574,7 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 
 ### Changelog
 
+- **15/10/2026 — organização de arquivos:** serviço Python independente de Django gera categorias, inventário e ZIP em diretório exclusivo. Cópia limitada reutiliza o leitor da validação; erros eliminam a saída parcial. Validação integrada pelo PR #8; fluxo web de resultados permanece pendente.
 - **14/10/2026 — validação ZIP:** pré-inspeção limitada do diretório central, inspeção de metadados e leitura limitada de Stored/Deflate com CRC. Formulário traduz erros de domínio; resumo exibe quantidade de arquivos sem gerar resultados. Upload integrado pelo PR #7.
 - **14/10/2026 — upload:** formulário ZIP e endpoint POST adicionados com validação inicial de extensão, arquivo vazio, quantidade e tamanho. Conferência de bytes lidos e estados de erro/recebimento na aba Executar. Página didática integrada pelo PR #6.
 - **14/10/2026 — página de Arquivos:** seis etapas Bootstrap, categorias, trecho Python comentado, exercício conceitual, desafio e resultado esperado. ZIP fictício versionado com download por rota fixa GET/HEAD, sem acesso a caminhos do cliente. Catálogo integrado pelo PR #5.
@@ -592,7 +599,8 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [x] Catálogo completo integrado em `dev` pelo PR #5.
 - [x] Página didática e ZIP de exemplo integrados em `dev` pelo PR #6.
 - [x] Formulário e recebimento ZIP integrados em `dev` pelo PR #7.
-- [x] Inspeção ZIP implementada e testada na feature (envio e integração pendentes).
+- [x] Inspeção ZIP implementada, testada e integrada em `dev` pelo PR #8.
+- [x] Serviço de organização e inventário implementado e testado na feature (envio e integração pendentes).
 - [ ] Laboratório de Arquivos implementado e testado.
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Devcontainer Codespaces validado.
@@ -687,3 +695,15 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Testes cobrem ZIP inválido/vazio, diretórios apenas, caminhos absolutos/Windows/UNC/travessia, caracteres de controle/NUL, duplicatas normalizadas, symlink/tipos especiais, metadados, criptografia, métodos recusados, múltiplos volumes e ZIP64. Também cobrem contagem falsa, tamanhos declarados/reais, limite acumulado, CRC, truncamento, cabeçalhos inconsistentes, sobreposição, data descriptor e arquivos válidos maiores que um bloco.
 - Navegador local: exemplo válido retornou 200 com seis arquivos; ZIP de teste com `../fora.txt` retornou 400 com erro compreensível, mantendo Executar ativa. Mobile 390 × 844 sem rolagem horizontal da página no estado de erro. Capturas locais `/tmp/autolab-zip-validado.png`, `/tmp/autolab-zip-rejeitado.png` e `/tmp/autolab-zip-rejeitado-mobile.png`, não versionadas.
 - Catálogo continua com automação em breve: esta entrega apenas inspeciona. Organização, relatório, saída, tokens, expiração e limpeza aguardam branches próprias. CI remoto da feature depende do push manual e da revisão.
+- Atualização: inspeção integrada pelo PR #8 com dois checks aprovados; `dev` sincronizada em `5ffb3ff`. A pendência de envio acima é histórica.
+
+### Evidências da organização de arquivos
+
+- Branch: `feat/organizacao-arquivos`, iniciada sobre `feat/validacao-zip` em `5861e5a` enquanto aguardava envio manual. Após integração do PR #8, `dev` em `5ffb3ff` incorporada por merge sem conflitos. Destino do PR: `dev`; dependência encadeada resolvida.
+- `laboratorios/services/arquivo_service.py`: contrato da seção 20.4, quatro categorias inclusive vazias, contagens, avisos de nomes alterados e inventário UTF-8. Sem dependência de Django, novas bibliotecas, modelos ou caminhos de entrada usados como destinos no sistema de arquivos.
+- `zip_validator.py`: normalização de caminhos reutilizável e cópia limitada para destino controlado; inspeção existente continua sem escrita. Resultado permanece em subdiretório privado gerado pelo servidor; cópia interrompida elimina a saída parcial sem alterar entrada ou execuções anteriores.
+- `.venv/bin/python manage.py check`: sem problemas; testes Django e pytest: 83 passaram em cada suíte; `makemigrations --check --dry-run`: nenhuma mudança; `git diff --check`: sem problemas.
+- Quatorze novos testes cobrem exemplo completo, extensões maiúsculas/desconhecidas, categorias vazias, colisões com nomes gerados, Unicode, nomes especiais/longos, CSV com fórmulas e aspas, ordem determinística, relatório de entrada, travessia, limites, falha após escrita parcial, execuções paralelas e conteúdo Stored/Deflate maior que um bloco.
+- Demonstração executada em Python sem inicializar Django: exemplo produziu seis arquivos, Documentos=3, Planilhas=1, Imagens=1, Outros=1; segundo comunicado virou `comunicado_2.txt`. Integridade do ZIP e inventário conferidos. Artefato local `/tmp/autolab-arquivos-organizados-demo.zip`, fora do Git.
+- A view ainda apenas inspeciona o upload; catálogo mantém automação em breve. Resumo web, persistência de token, download, expiração e limpeza permanecem nas entregas seguintes. Nenhuma alteração visual nesta branch; testes de capacidade da oficina continuam pendentes.
+- CI remoto desta branch aguarda push manual e abertura do PR. Testes locais não comprovam execução remota.
