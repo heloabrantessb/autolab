@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Exercício de organização — AutoLab{% endblock %}
+{% block content %}
+<h1 class="h3">Exercício: organização de arquivos</h1>
+<p class="lead">Complete três funções Python para classificar arquivos, preservar nomes repetidos e criar um inventário.</p>
+<p>Nível: iniciante · Pré-requisitos: funções, conjuntos, laços e extensões · Duração sugerida: 25 minutos.</p>
+<h2 class="h4">Problema</h2>
+<p>Uma equipe recebeu seis arquivos misturados em um ZIP. Dois comunicados têm o mesmo nome e conteúdos diferentes. Preserve todos os arquivos e registre sua origem no relatório.</p>
+<a class="btn btn-primary mb-3" href="{% url 'exercicios:materiais_arquivos' %}">Baixar exercício Python</a>
+<p>O pacote inclui instruções, <code>starter.py</code>, apoio de execução, testes e o ZIP fictício. Use Python 3.12 ou superior; nenhuma instalação de biblioteca é necessária.</p>
+<h2 class="h4">Passo a passo</h2>
+<ol>
+  <li>Descompacte o pacote em uma pasta nova e leia <code>README.md</code>.</li>
+  <li>Complete <code>categoria</code> usando a extensão em minúsculas.</li>
+  <li>Complete <code>nome_unico</code> com sufixos incrementais e comparação sem distinguir maiúsculas.</li>
+  <li>Complete <code>linha_inventario</code> preservando o caminho original e indicando se o nome mudou.</li>
+  <li>Abra o terminal na pasta descompactada e rode os testes; depois gere uma saída com nome novo.</li>
+</ol>
+<pre class="bg-light border rounded p-3"><code>python tests/verificar.py
+python starter.py --saida resultado.zip</code></pre>
+<p>Os testes inicialmente falham porque os TODOs ainda não foram resolvidos. Ao completar as funções, os seis testes devem passar. O apoio aceita somente o ZIP fictício original, organiza o resultado e grava o CSV.</p>
+<h2 class="h4">Critérios de conclusão</h2>
+<ul>
+  <li>Seis arquivos: Documentos=3, Planilhas=1, Imagens=1, Outros=1.</li>
+  <li>Os dois comunicados existem com conteúdos distintos; o segundo recebe sufixo.</li>
+  <li><code>relatorio.csv</code> tem seis linhas de dados, caminhos originais, saída, categoria e status.</li>
+  <li>ZIP de entrada e saídas existentes permanecem inalterados.</li>
+</ul>
+<h2 class="h4">Desafio</h2>
+<p>Explique os casos <code>foto.JPG</code> e <code>LEIA-ME</code>. Teste uma colisão quando <code>a.txt</code> e <code>a_2.txt</code> já estão usados. Por que apenas contar os nomes não comprova que os conteúdos foram preservados?</p>
+<p>Dica: use <code>Path(nome).suffix.lower()</code> para a extensão e um conjunto com <code>casefold()</code> para os nomes usados. Se uma saída já existir, escolha outro nome em <code>--saida</code>.</p>
+<p>A verificação acontece no seu computador ou ambiente Python. O site não recebe nem executa sua solução e não registra progresso. O ambiente Codespaces ainda está em preparação.</p>
+<a class="btn btn-outline-primary mb-2" href="{% url 'laboratorios:arquivos' %}">Comparar com a demonstração do site</a>
+<a class="btn btn-outline-secondary mb-2" href="{% url 'exercicios:lista' %}">Voltar aos exercícios</a>
+{% endblock %}

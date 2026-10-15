@@ -80,7 +80,7 @@ class TestHomePage(SimpleTestCase):
         """Destinos existentes usam layout e deixam as pendencias explicitas."""
         for route, template, message in (
             ("laboratorios:arquivos", "laboratorios/arquivos.html", "Envie um ZIP para organizar os arquivos"),
-            ("exercicios:lista", "exercicios/lista.html", "Os exercícios e o ambiente Codespaces ainda estão em preparação."),
+            ("exercicios:lista", "exercicios/lista.html", "Abrir exercício de Arquivos"),
         ):
             with self.subTest(route=route):
                 response = self.client.get(reverse(route))
