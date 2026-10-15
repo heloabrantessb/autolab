@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Resultado indisponível — AutoLab{% endblock %}
+{% block content %}
+<h1 class="h3">{% if expirado %}Resultado expirado{% else %}Resultado não encontrado{% endif %}</h1>
+<p>{% if expirado %}O prazo de acesso terminou. Envie o ZIP novamente para gerar outro resultado.{% else %}Este resultado não está disponível. Confira o link ou gere outro resultado.{% endif %}</p>
+<a class="btn btn-primary" href="{% url 'laboratorios:arquivos' %}">Voltar ao laboratório de Arquivos</a>
+{% endblock %}
