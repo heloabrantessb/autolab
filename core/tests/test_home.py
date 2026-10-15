@@ -39,8 +39,8 @@ class TestHomePage(SimpleTestCase):
 
     def test_home_shows_availability_badges(self):
         """Pagina inicial mostra badges de disponibilidade."""
-        self.assertContains(self.response, '<span class="badge badge-status-em-breve px-2 py-1">Em breve</span>', count=3, html=True)
-        self.assertNotContains(self.response, "badge-status-disponivel")
+        self.assertContains(self.response, '<span class="badge badge-status-em-breve px-2 py-1">Em breve</span>', count=2, html=True)
+        self.assertContains(self.response, "badge-status-disponivel", count=1)
         self.assertContains(self.response, "Plataforma em desenvolvimento")
 
     def test_home_cta_links_to_catalogo(self):
@@ -49,9 +49,8 @@ class TestHomePage(SimpleTestCase):
         self.assertContains(self.response, f'href="{catalogo_url}"')
 
     def test_unavailable_lab_actions_are_disabled(self):
-        """Nenhum destaque oferece execucao de laboratorio incompleto."""
+        """Somente Arquivos oferece acesso; demais módulos seguem em breve."""
         for label in (
-            "Arquivos &amp; Pastas: em breve",
             "Planilhas: em breve",
             "IA &amp; Prompts: em breve",
         ):
@@ -61,7 +60,7 @@ class TestHomePage(SimpleTestCase):
                     f'<button type="button" class="btn btn-sm btn-outline-secondary" disabled aria-label="{label}">Em breve</button>',
                     html=True,
                 )
-        self.assertNotContains(self.response, ">Acessar</a>")
+        self.assertContains(self.response, 'aria-label="Acessar Arquivos &amp; Pastas"')
 
     def test_home_contains_codespaces_mention(self):
         """Pagina inicial menciona GitHub Codespaces."""

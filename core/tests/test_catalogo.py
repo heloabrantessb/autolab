@@ -22,10 +22,10 @@ class TestCatalogo(SimpleTestCase):
 
     def test_incomplete_labs_have_no_execution_links(self):
         response = self.client.get(reverse("core:catalogo"))
-        self.assertContains(response, 'class="badge badge-status-em-breve px-2 py-1"', count=6)
-        self.assertContains(response, 'disabled aria-label=', count=6)
-        self.assertNotContains(response, "badge-status-disponivel")
-        self.assertNotContains(response, ">Acessar</a>")
+        self.assertContains(response, 'class="badge badge-status-em-breve px-2 py-1"', count=5)
+        self.assertContains(response, 'disabled aria-label=', count=5)
+        self.assertContains(response, "badge-status-disponivel", count=1)
+        self.assertContains(response, 'aria-label="Acessar Arquivos &amp; Pastas"')
 
     def test_home_only_highlights_mvp(self):
         response = self.client.get(reverse("core:home"))

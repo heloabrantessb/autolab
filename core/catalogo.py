@@ -7,7 +7,7 @@ LABORATORIOS = (
         "resumo": "Organize arquivos por extensão, gere um inventário e baixe um ZIP categorizado.",
         "nivel": "Iniciante",
         "mvp": True,
-        "disponivel": False,
+        "disponivel": True,
         "rota": "laboratorios:arquivos",
     },
     {
