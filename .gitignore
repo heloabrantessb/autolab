@@ -40,6 +40,7 @@ media/
 # AutoLab results and temporary files
 var/results/
 var/tmp/
+codespaces_exercises/arquivos/resultado*.zip
 
 # Testing & Coverage
 .pytest_cache/
