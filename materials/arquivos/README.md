@@ -36,5 +36,6 @@ depende da rotina de limpeza descrita em `docs/OPERACAO_RESULTADOS.md`.
 O exercício guiado, com script-base e testes locais, está em
 `codespaces_exercises/arquivos/README.md` e pode ser baixado pelo site. Ele usa
 exclusivamente este ZIP original, conferido por SHA-256, e não processa arquivos
-arbitrários. O Codespaces será configurado na próxima entrega. O site não
-recebe nem executa código do participante.
+arbitrários. A configuração do Codespaces está preparada; a validação hospedada
+ainda está pendente. Consulte `docs/CODESPACES.md`. O site não recebe nem
+executa código do participante.

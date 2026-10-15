@@ -147,7 +147,12 @@ python starter.py --saida resultado.zip
 
 Os testes do exercício falham inicialmente até resolver os três TODOs.
 Eles verificam o código local; o site não executa soluções dos participantes.
-Codespaces ainda será configurado em sua entrega própria.
+A configuração do Codespaces está preparada; a validação hospedada ainda está
+pendente. Após integrar a configuração em `dev`, use
+[Preparar Codespace do AutoLab](https://codespaces.new/heloabrantessb/autolab/tree/dev).
+O link abre a tela de criação: requer conta GitHub e cota disponível.
+Consulte [ambiente e validação do Codespaces](docs/CODESPACES.md) para setup,
+prévia privada, checklist da oficina e alternativa sem conta GitHub.
 
 Para o instrutor, `python tests/verificar.py --referencia` verifica a solução
 de referência no repositório completo. Ela não é incluída no pacote baixado.

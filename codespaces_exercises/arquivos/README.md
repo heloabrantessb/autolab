@@ -16,8 +16,11 @@ cd codespaces_exercises/arquivos
 Se você baixou o pacote do exercício pelo site, descompacte-o em uma pasta
 nova e abra o terminal nessa pasta. O pacote já inclui `exemplo.zip`. No
 repositório completo, o apoio encontra o mesmo arquivo em `materials/arquivos`.
-O ambiente Codespaces será configurado na próxima entrega; também é possível
-executar os comandos em uma instalação local de Python.
+A configuração do Codespaces está preparada no repositório; a validação no
+serviço hospedado ainda está pendente. Após sua integração em `dev`, use
+[Preparar Codespace](https://codespaces.new/heloabrantessb/autolab/tree/dev),
+com conta GitHub e cota disponível. Confira a branch antes de criar o ambiente.
+Também é possível executar os comandos em uma instalação local de Python.
 
 ## Problema e entrada
 

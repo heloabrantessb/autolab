@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 15/10/2026
-**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo e fluxo web de Arquivos com limpeza integrados em `dev`. Exercício de organização com script-base, testes locais e pacote para download implementado na `feat/exercicio-organizacao`, aguardando envio e revisão. Codespaces ainda pendente; agendamento externo da limpeza necessário antes da oficina. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, fluxo web de Arquivos com limpeza e exercício de organização integrados em `dev`. Configuração Codespaces implementada e testada em Dev Container local na `feat/codespaces-arquivos`, aguardando envio, revisão e validação hospedada. Agendamento externo da limpeza necessário antes da oficina. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Enviar `feat/exercicio-organizacao`, abrir PR para `dev`, confirmar o CI e revisar. Após integração, iniciar `feat/codespaces-arquivos`: devcontainer, preparação de dependências, instruções e links reais para abrir o repositório. Validar o ambiente disponível localmente e solicitar validação externa de Codespaces quando necessária, sem confundir testes locais com execução hospedada. Depois seguem Planilhas, IA controlada e preparação para publicação. A autorização de 15/10/2026 permite seguir essas etapas sem nova aprovação a cada branch, parando quando houver decisão pendente ou ação externa necessária. Push manual permanece a cargo do responsável. Limpeza integrada pelo PR #11. Agendamento externo da limpeza precisa ser configurado e validado antes da oficina, conforme `docs/OPERACAO_RESULTADOS.md`.
+Enviar `feat/codespaces-arquivos`, abrir PR para `dev`, confirmar o CI e validar o Codespaces hospedado com o responsável antes de considerar a entrega concluída. Checklist em `docs/CODESPACES.md`; contêiner local já testado, sem criar ambiente na conta GitHub. Após validação e integração, iniciar `feat/laboratorio-planilhas-pagina`: página didática com etapas, objetivos e dados fictícios, mantendo processamento indisponível até suas branches próprias de upload/leitura/limpeza/exportação. Depois seguem IA controlada e preparação para publicação. A autorização de 15/10/2026 permite seguir essas etapas sem nova aprovação a cada branch, parando quando houver decisão pendente ou ação externa necessária. Push manual permanece a cargo do responsável. Exercício integrado pelo PR #12. Agendamento externo da limpeza precisa ser configurado e validado antes da oficina, conforme `docs/OPERACAO_RESULTADOS.md`.
 
 ---
 
@@ -432,6 +432,8 @@ Manter `.devcontainer/devcontainer.json` com Python e extensões úteis (Python,
 
 **Exercício de Arquivos implementado antes do devcontainer:** três TODOs para classificação, nomes únicos e linha de inventário. `python tests/verificar.py` executa seis critérios locais em `unittest`, somente com stdlib. O starter intencionalmente incompleto falha até o participante resolver as funções. O apoio aceita exclusivamente o ZIP fictício versionado, validando tamanho e SHA-256 antes de abrir; não substitui o serviço de uploads do site nem aceita ZIP arbitrário. A saída usa criação exclusiva e falhas descartam somente a saída recém-criada. Geração de ZIP/CSV fica no apoio para concentrar o exercício inicial nas três regras de negócio. A referência do instrutor passa os mesmos critérios e não entra no pacote público baixável. Nenhum código é enviado ou executado no servidor e não há progresso persistente. A duração de 25 minutos é uma estimativa a validar na oficina.
 
+**Configuração implementada na entrega Codespaces:** imagem oficial Python 3.12 Bookworm fixada por digest, `remoteUser=vscode`, `.venv`, dependências fixadas e setup por `postCreateCommand`. Extensões Python/Pylance e abertura de README/starter configuradas; somente a porta 8000 é encaminhada, sem tornar sua visibilidade pública. O script de prévia configura host e origem CSRF exatos pelas variáveis fornecidas pelo Codespaces e desativa IA. Fora do Codespaces, preserva hosts/origens configurados e usa bind loopback. Não sobrescreve `.env` existente, não zera banco e não agenda limpeza. Links reais usam a branch `dev` do repositório `heloabrantessb/autolab`, pois `main` ainda não recebeu as entregas. UI informa validação hospedada pendente; ver `docs/CODESPACES.md` para requisitos, retomada/rebuild, alternativa local e checklist antes da oficina.
+
 ## 24. Configuração e dependências
 
 `.env.example` deve documentar ao menos:
@@ -577,6 +579,8 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 15/10/2026 | Implementado na feature | Comando de limpeza de expirados com simulação, lotes e recuperação de falhas; Arquivos disponível no catálogo; agendamento externo pendente |
 | 15/10/2026 | Integrado | Limpeza e acesso a Arquivos integrados pelo PR #11 com dois checks aprovados; `dev` sincronizada em `bc40c5c` |
 | 15/10/2026 | Implementado na feature | Exercício guiado com três TODOs, seis critérios locais e pacote público sem referência do instrutor; Codespaces pendente |
+| 15/10/2026 | Integrado | Exercício integrado pelo PR #12 com dois checks aprovados; `dev` sincronizada em `3585612` |
+| 15/10/2026 | Implementado na feature | Devcontainer e scripts testados com CLI oficial em contêiner local; links e instruções preparados; validação hospedada pendente |
 | 14/10/2026 | Decisao tecnica | Primeiro perfil aceita Stored/Deflate; recusa ZIP64, criptografia, multiplos volumes, outros metodos e metadados de sistema; restricoes explicitas na UI e materiais |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
@@ -596,6 +600,7 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 
 ### Changelog
 
+- **15/10/2026 — configuração Codespaces:** imagem oficial por digest, setup de dependências/migrações, prévia com host/CSRF restritos e links para criação em `dev`. Dev Container local validado com testes e fluxo de upload; criação no GitHub continua pendente. Exercício integrado pelo PR #12.
 - **15/10/2026 — exercício de Arquivos:** script-base, apoio restrito ao ZIP fictício, critérios locais e referência do instrutor. Lista/detalhe e download de pacote autocontido adicionados; links no laboratório e textos da home alinhados. Limpeza integrada pelo PR #11; devcontainer em entrega própria.
 - **15/10/2026 — limpeza de resultados:** comando de remoção restrita de expirados com modo de simulação, revalidação e testes de falhas. Fluxo de Arquivos habilitado no catálogo/home; operação e exemplo de agendamento documentados, sem instalar cron. Download integrado pelo PR #10.
 - **15/10/2026 — download de resultados:** view conectada à organização, metadados temporários com migração, resumo após redirecionamento e download com validação de token/caminho/prazo. Upload descartado ao concluir; limpeza periódica pendente. Organização integrada pelo PR #9.
@@ -630,7 +635,8 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [x] Comando de limpeza implementado, testado e integrado pelo PR #11.
 - [ ] Limpeza agendada e validada externamente antes da oficina.
 - [x] Fluxo web do Laboratório de Arquivos implementado, testado e integrado em `dev`.
-- [x] Exercício de organização com material e critérios locais implementado e testado na feature (envio e integração pendentes).
+- [x] Exercício de organização com material e critérios locais integrado pelo PR #12.
+- [x] Configuração Codespaces implementada e testada em Dev Container local na feature (envio e integração pendentes).
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Devcontainer Codespaces validado.
 - [ ] Laboratório de IA implementado e testado.
@@ -774,3 +780,16 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Dez testes novos do site cobrem páginas, métodos, conteúdo exato do pacote, exclusão da referência, material ausente, execução sem site-packages, erro esperado do starter, material adulterado, saídas inválidas e descarte de saída parcial. Pacote descompactado em área temporária foi testado primeiro com TODOs pendentes e depois com a referência no lugar do starter: seis critérios passaram e a CLI produziu ZIP íntegro com total seis, sem instalar bibliotecas.
 - Navegador local: lista abriu o detalhe e botão baixou o pacote; ZIP baixado conferido com os cinco arquivos, hash do exemplo preservado e sem referência. Detalhe conferido em desktop e mobile 390 × 844, sem rolagem horizontal no tamanho testado. Capturas `/tmp/autolab-exercicio-desktop.png` e `/tmp/autolab-exercicio-mobile.png`, fora do Git; servidor de teste encerrado.
 - Scripts rodam com Python 3.12+ sem Django ou pip. Exercícios de Planilhas/IA e Codespaces permanecem em preparação. CI remoto desta branch aguarda push manual; validação do devcontainer hospedado ficará na próxima entrega.
+- Atualização: exercício integrado pelo PR #12 com dois checks aprovados; base sincronizada em `3585612`. A pendência de envio acima é histórica.
+
+### Evidências da configuração Codespaces
+
+- Branch: `feat/codespaces-arquivos`; base: `dev`, commit `3585612`. PR previsto para `dev`; depende do exercício já integrado. Escopo: ambiente e instruções, sem criação de recursos hospedados ou publicação do site.
+- `.devcontainer/devcontainer.json`, Dockerfile e scripts de setup/prévia adicionados. Imagem `mcr.microsoft.com/devcontainers/python:3.12-bookworm` fixada no digest `sha256:589b65db720b03c96d721706005f176ff467ee879f92c2d137c04a537feffa56`, consultado no registro oficial. Dependências do projeto instaladas em `.venv`, sem copiar segredos para a imagem.
+- JSON lido por `python -m json.tool` e CLI oficial Dev Containers 0.89.0; scripts passaram em `bash -n`. CLI criou o contêiner com sucesso em cópia temporária sem credenciais, `.env`, banco ou ambiente virtual do projeto real. Docker local 29.6.2, Linux amd64, usuário `vscode`, Python 3.12.15. Não se declara validação de outra arquitetura ou do serviço hospedado.
+- Setup executado com instalação de dependências fixadas, `pip check`, migrações e `manage.py check`. Repetição preservou `.env` personalizado e registros do banco. Servidor não é iniciado automaticamente; agendamento de limpeza não é configurado.
+- Testes Django e pytest: 127 passaram em cada suíte, tanto no ambiente local quanto no contêiner. Seis critérios do exercício passaram com a referência no contêiner. `makemigrations --check --dry-run`: nenhuma mudança; `git diff --check`: sem problemas.
+- Cinco testes novos verificam início sem setup/variáveis, bind loopback fora do Codespaces, IA desativada, hosts/origem exatos, CSRF real aceitando somente a origem esperada e links para a branch integrada. Testes anteriores atualizados para o novo estado da UI.
+- Prévia real iniciada no contêiner pelo script, com variáveis de Codespaces simuladas: formulário/CSRF, organização do exemplo, resumo e download íntegro passaram. O contêiner temporário foi removido após a verificação. Logs locais em `/tmp/autolab-devcontainer-up.log`; nenhum banco ou `.env` do responsável modificado.
+- Links e notas de validação pendente compartilhados entre laboratório e exercício; documentação em `docs/CODESPACES.md` cita fontes oficiais consultadas. Pacote Python independente do site continua disponível como alternativa sem conta GitHub.
+- Pendente: push manual, CI remoto e checklist hospedado com conta GitHub/cota, editor, arquivos abertos, porta privada e outra conta participante. Teste local não comprova esses itens e nenhum Codespace foi criado automaticamente.
