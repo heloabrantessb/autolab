@@ -1,8 +1,16 @@
-{% if recebido %}
+{% if tabela %}
   <div class="alert alert-info" role="status">
-    Arquivo recebido para conferência inicial de extensão e tamanho.
-    O conteúdo não foi interpretado e o envio não foi salvo como resultado.
-    Leitura, limpeza e exportação ainda estão em preparação. Envie novamente quando essas etapas estiverem disponíveis.
+    Planilha lida para prévia. {{ tabela.linhas|length }} linha{{ tabela.linhas|length|pluralize }} de dados,
+    {{ tabela.cabecalho|length }} coluna{{ tabela.cabecalho|length|pluralize }} ({{ tabela.formato }}).
+    Os dados não foram limpos e o envio não foi salvo como resultado.
+    Fórmulas são exibidas como texto, sem cálculo. Identificadores devem estar armazenados como texto para preservar zeros iniciais.
+  </div>
+  <div class="table-responsive mb-3">
+    <table class="table table-bordered">
+      <caption>Prévia da entrada: até dez linhas, incluindo vazias e duplicadas, com espaços preservados. Células longas são abreviadas em 200 caracteres e cabeçalhos em 80; os dados lidos permanecem completos.</caption>
+      <thead><tr>{% for coluna in tabela.cabecalho %}<th scope="col">{{ coluna|truncatechars:80 }}</th>{% endfor %}</tr></thead>
+      <tbody>{% for linha in tabela.previa %}<tr>{% for celula in linha %}<td class="autolab-preview-cell">{{ celula|truncatechars:200 }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+    </table>
   </div>
 {% endif %}
 {% if form.errors %}
@@ -17,5 +25,5 @@
     <div class="form-text" id="{{ form.arquivo_planilha.id_for_label }}_helptext">{{ form.arquivo_planilha.help_text }}</div>
     <div class="text-danger">{{ form.arquivo_planilha.errors }}</div>
   </div>
-  <button class="btn btn-primary" type="submit">Enviar para conferir tamanho</button>
+  <button class="btn btn-primary" type="submit">Ler planilha</button>
 </form>

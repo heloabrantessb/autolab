@@ -96,8 +96,9 @@ class UploadPlanilhaForm(forms.Form):
         self.limite_bytes = settings.MAX_SPREADSHEET_UPLOAD_BYTES
         self.fields["arquivo_planilha"].help_text = (
             f"Envie um único CSV ou XLSX de até {self.limite_bytes / (1024 * 1024):g} MiB. "
-            "Nesta etapa conferimos somente extensão e tamanho. "
-            "O conteúdo ainda não será lido, limpo ou exportado."
+            f"Até {settings.MAX_SPREADSHEET_ROWS} linhas de dados e {settings.MAX_SPREADSHEET_COLUMNS} colunas. "
+            "CSV UTF-8 separado por vírgulas ou XLSX de uma única aba de tabela. "
+            "A leitura preserva os dados; limpeza e exportação ainda não estão disponíveis."
         )
 
     def clean_arquivo_planilha(self):

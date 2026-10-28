@@ -204,3 +204,9 @@ body {
     padding: 1rem;
   }
 }
+
+/* Prévia de tabelas: evidencia os espaços que a atividade ensinará a limpar. */
+.autolab-preview-cell {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

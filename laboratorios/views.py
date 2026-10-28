@@ -1,5 +1,7 @@
 """Views dos laboratorios de automacao."""
 
+from pathlib import Path
+
 from django.conf import settings
 from django.db import DatabaseError
 from django.http import FileResponse, Http404, HttpResponse
@@ -11,6 +13,7 @@ from django.views.decorators.http import require_POST, require_safe
 
 from .forms import UploadPlanilhaForm, UploadZIPForm
 from .models import ResultadoTemporario
+from .services.planilha_reader import LimitesPlanilha, PlanilhaInvalida, ler_planilha
 from .services.resultados import caminho_resultado, criar_resultado
 from .services.zip_validator import ArquivoInvalido
 
@@ -147,12 +150,22 @@ def exemplo_planilhas(request):
 @require_POST
 @never_cache
 def receber_planilha(request):
-    """Confere recebimento inicial; não interpreta nem persiste a entrada."""
+    """Lê entrada limitada para prévia; não limpa ou persiste resultados."""
     form = UploadPlanilhaForm(request.POST, request.FILES)
-    recebido = form.is_valid()
+    tabela = None
+    if form.is_valid():
+        arquivo = form.cleaned_data["arquivo_planilha"]
+        try:
+            tabela = ler_planilha(arquivo, Path(arquivo.name).suffix[1:].lower(), LimitesPlanilha(
+                upload_bytes=settings.MAX_SPREADSHEET_UPLOAD_BYTES,
+                linhas=settings.MAX_SPREADSHEET_ROWS,
+                colunas=settings.MAX_SPREADSHEET_COLUMNS,
+            ))
+        except PlanilhaInvalida as exc:
+            form.add_error("arquivo_planilha", str(exc))
     return render(request, "laboratorios/planilhas.html", {
         "etapas": ETAPAS_LABORATORIO, "etapa_ativa": "executar",
         "limite_mib": settings.MAX_SPREADSHEET_UPLOAD_BYTES / (1024 * 1024),
-        "form": UploadPlanilhaForm() if recebido else form,
-        "recebido": recebido,
-    }, status=200 if recebido else 400)
+        "form": UploadPlanilhaForm() if tabela else form,
+        "tabela": tabela,
+    }, status=200 if tabela else 400)

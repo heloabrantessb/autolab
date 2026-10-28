@@ -5,7 +5,7 @@
   <h1 class="h3 fw-bold">Laboratório de Planilhas</h1>
   <p class="lead">Aprenda a limpar uma tabela sem perder registros parcialmente preenchidos.</p>
   <p class="small text-muted">Nível: iniciante · Pré-requisitos: linhas, colunas e funções Python · Duração sugerida: 25 minutos.</p>
-  <div class="alert alert-info" role="status">Conteúdo didático e CSV fictício disponíveis. O processamento de planilhas ainda está em preparação.</div>
+  <div class="alert alert-info" role="status">Conteúdo didático, CSV fictício e leitura para prévia disponíveis. Limpeza e exportação ainda estão em preparação.</div>
 </header>
 {% include "partials/lab_tabs.html" with etapas=etapas prefix="planilhas" etapa_ativa=etapa_ativa only %}
 <noscript>
@@ -30,7 +30,8 @@
     <p>O CSV tem oito linhas de dados e cinco colunas. Inclui uma duplicata exata, uma linha completamente vazia e duas versões de Bruno que ficam iguais depois de aparar os espaços.</p>
     <p>Carla não tem e-mail; sua linha deve permanecer. Nomes e contatos são fictícios; os endereços usam <code>example.invalid</code>.</p>
     <a class="btn btn-outline-primary mb-3" href="{% url 'laboratorios:exemplo_planilhas' %}">Baixar CSV fictício</a>
-    <p>Envie o exemplo para conferir extensão e tamanho (até {{ limite_mib|floatformat:"-1" }} MiB). A leitura CSV/XLSX ainda não está disponível; extensão aceita não comprova conteúdo válido. Limites previstos para a leitura: 10 mil linhas e 30 colunas.</p>
+    <p>Envie o exemplo para ler uma prévia da entrada (até {{ limite_mib|floatformat:"-1" }} MiB). A leitura não apara espaços nem remove registros. CSV deve usar UTF-8 (com ou sem BOM), vírgulas e cabeçalho com nomes preenchidos e únicos.</p>
+    <p>XLSX deve ter uma única aba de tabela, sem células mescladas, vínculos externos, macros, mídia ou componentes binários. Cada célula admite até 32.768 caracteres. Identificadores devem estar armazenados como texto para manter zeros iniciais.</p>
     {% include "partials/upload_planilha_form.html" %}
     <button class="btn btn-secondary" type="button" disabled>Processamento de planilhas em breve</button>
     <p class="small text-muted mt-2">Use apenas dados fictícios na oficina. Uma extensão de arquivo não comprova seu conteúdo.</p>
@@ -87,7 +88,7 @@ with open("clientes.csv", encoding="utf-8-sig", newline="") as arquivo:
       <li>A saída mantém as cinco colunas e seus nomes.</li>
       <li>Dados de exemplo e arquivos de entrada são preservados.</li>
     </ul>
-    <p>A prévia de dados enviados e o download de resultados serão disponibilizados nas próximas entregas.</p>
+    <p>A prévia da entrada está na aba Executar. Limpeza e download de resultados serão disponibilizados nas próximas entregas.</p>
   </section>
 </div>
 {% endblock %}
