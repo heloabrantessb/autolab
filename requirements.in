@@ -2,6 +2,10 @@
 Django>=5.2,<5.3
 python-decouple>=3.8,<4.0
 
+# Leitura de planilhas XLSX e XML sem entidades externas
+openpyxl>=3.1.5,<3.2
+defusedxml>=0.7.1,<0.8
+
 # Ferramentas de desenvolvimento e testes
 pytest>=8.3,<9.0
 pytest-django>=4.9,<5.0
