@@ -1,4 +1,4 @@
-"""Recebimento inicial, sem interpretação ou armazenamento de planilhas."""
+"""Recebimento com prévia limitada, sem limpeza ou armazenamento de resultados."""
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -28,22 +28,22 @@ class TestUploadPlanilha(SimpleTestCase):
         self.assertContains(response, "20 MiB")
         self.assertNotContains(response, "multiple")
 
-    def test_csv_receipt_is_explicitly_initial_and_does_not_echo_data(self):
+    def test_csv_reading_shows_preview_without_cleaning(self):
         response = self.upload(conteudo=b"campo\nconteudo-privado\n")
-        self.assertContains(response, "Arquivo recebido para conferência inicial")
-        self.assertContains(response, "O conteúdo não foi interpretado")
+        self.assertContains(response, "Planilha lida para prévia")
+        self.assertContains(response, "Os dados não foram limpos")
         self.assertContains(response, "o envio não foi salvo como resultado")
-        self.assertNotContains(response, "conteudo-privado")
+        self.assertContains(response, "conteudo-privado")
         self.assertContains(response, 'aria-current="page"')
         self.assertContains(response, 'class="tab-pane autolab-lab-panel active" id="planilhas-executar"')
         self.assertIn("no-store", response["Cache-Control"])
 
-    def test_uppercase_csv_and_xlsx_ignore_untrusted_mime(self):
+    def test_uppercase_extensions_and_untrusted_mime_pass_initial_form_checks(self):
         for nome in ("clientes.CSV", "clientes.XLSX"):
             with self.subTest(nome=nome):
-                # Conteúdo propositalmente arbitrário: esta etapa não valida formato.
-                response = self.upload(nome, b"recebimento apenas", content_type="application/octet-stream")
-                self.assertContains(response, "O conteúdo não foi interpretado")
+                # Formulário confere recebimento; o serviço verifica o conteúdo depois.
+                arquivo = SimpleUploadedFile(nome, b"recebimento apenas", content_type="application/octet-stream")
+                self.assertTrue(UploadPlanilhaForm(files={"arquivo_planilha": arquivo}).is_valid())
 
     def test_required_empty_and_unsupported_extensions(self):
         responses = [
@@ -60,7 +60,7 @@ class TestUploadPlanilha(SimpleTestCase):
 
     @override_settings(MAX_SPREADSHEET_UPLOAD_BYTES=4)
     def test_exact_size_accepted_and_larger_rejected(self):
-        self.assertEqual(self.upload(conteudo=b"1234").status_code, 200)
+        self.assertEqual(self.upload(conteudo=b"a\n1\n").status_code, 200)
         response = self.upload(conteudo=b"12345")
         self.assertContains(response, "tamanho máximo", status_code=400)
 
@@ -107,12 +107,12 @@ class TestUploadPlanilha(SimpleTestCase):
             "csrfmiddlewaretoken": client.cookies["csrftoken"].value,
             "arquivo_planilha": SimpleUploadedFile("a.csv", b"id\n001\n"),
         })
-        self.assertContains(response, "Arquivo recebido para conferência inicial")
+        self.assertContains(response, "Planilha lida para prévia")
 
     def test_upload_does_not_persist_or_use_client_filename_as_path(self):
         with TemporaryDirectory() as area, override_settings(RESULTS_ROOT=Path(area)):
             response = self.upload("<script>.csv")
-            self.assertContains(response, "Arquivo recebido para conferência inicial")
+            self.assertContains(response, "Planilha lida para prévia")
             self.assertNotContains(response, "<script>")
             self.assertEqual(list(Path(area).iterdir()), [])
         # SimpleTestCase também impede acesso acidental ao banco de resultados.

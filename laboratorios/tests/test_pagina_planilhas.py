@@ -17,7 +17,7 @@ class TestPaginaPlanilhas(SimpleTestCase):
         for slug in ("aprender", "executar", "codigo", "exercicio", "desafio", "resultado"):
             self.assertContains(response, f'aria-controls="planilhas-{slug}"')
             self.assertContains(response, f'aria-labelledby="planilhas-{slug}-tab"')
-        self.assertContains(response, "O processamento de planilhas ainda está em preparação.")
+        self.assertContains(response, "Limpeza e exportação ainda estão em preparação.")
         self.assertContains(response, "não o resultado de uma execução no site")
         self.assertContains(response, "Não apague linhas parcialmente preenchidas")
         self.assertContains(response, "XLS e XLSM ficam fora deste corte")
