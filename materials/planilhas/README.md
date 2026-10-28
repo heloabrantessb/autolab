@@ -27,8 +27,8 @@ Permanecem os ids `001`, `002`, `003`, `004` e `005`, nessa ordem. Carla continu
 sem e-mail; nenhum registro parcialmente preenchido é removido por esse motivo.
 As cinco colunas e os zeros iniciais dos identificadores devem ser preservados.
 
-A tabela exibida no laboratório é uma referência fixa, não um processamento
-feito pelo site. O laboratório oferece conteúdo didático, download do CSV e conferência inicial
-de recebimento (extensão e tamanho). Leitura CSV/XLSX, limpeza e exportação
-virão em branches próprias; enviar o arquivo ainda não interpreta seu conteúdo.
-Não sobrescreva o material de entrada ao implementar a automação.
+A tabela da aba Resultado é uma referência fixa, não uma limpeza feita pelo
+site. Na aba Executar, a leitura do CSV mostra as oito linhas originais, sem
+aparar espaços ou remover registros. Limpeza e exportação virão em branches
+próprias. Veja o [contrato de leitura](../../docs/LEITURA_PLANILHAS.md) para
+CSV/XLSX, cabeçalhos e limites. Não sobrescreva o material de entrada.

@@ -2,7 +2,7 @@
 
 Plataforma web educacional desenvolvida para a oficina de **Automação de Processos com IA e Python**.
 
-O AutoLab permite aprender conceitos de automação, executar o fluxo de Arquivos no navegador com dados fictícios e praticar Python localmente com um pacote de exercício baixável. Planilhas está na etapa de conteúdo didático; seu processamento ainda será implementado.
+O AutoLab permite aprender conceitos de automação, executar o fluxo de Arquivos no navegador com dados fictícios e praticar Python localmente com um pacote de exercício baixável. Planilhas oferece conteúdo didático e leitura para prévia; limpeza e exportação ainda serão implementadas.
 
 ---
 
@@ -164,14 +164,20 @@ etapas e o download do [CSV fictício](materials/planilhas/README.md). O exemplo
 contém duplicatas, espaços e uma linha vazia; a referência preserva registros
 parcialmente preenchidos e identificadores com zeros iniciais.
 
-O formulário já confere recebimento de um único CSV/XLSX não vazio, de até
-20 MiB por padrão (`MAX_SPREADSHEET_UPLOAD_BYTES`). Extensão e tamanho são
-conferidos; o conteúdo ainda não é interpretado. O envio não fica salvo como
-resultado.
+O formulário lê um CSV UTF-8 separado por vírgulas ou XLSX de uma única aba
+para mostrar até dez linhas da entrada. Limites padrão: 20 MiB, 10 mil linhas
+de dados e 30 colunas. Cabeçalhos devem ter nomes preenchidos e únicos. O
+[contrato de leitura](docs/LEITURA_PLANILHAS.md) descreve o perfil XLSX e seus
+limites adicionais.
 
-Leitura CSV/XLSX, limpeza e exportação serão entregues em branches próprias.
-A tabela de referência não representa uma execução no site, e a automação
-continua indisponível no catálogo.
+A leitura preserva espaços, duplicatas e linhas vazias. Fórmulas são texto,
+sem cálculo; identificadores devem estar armazenados como texto para manter
+zeros iniciais. A prévia escapa HTML e abrevia células longas sem alterar os
+dados lidos. O envio não fica salvo como resultado.
+
+Limpeza e exportação serão entregues em branches próprias. A tabela com cinco
+registros da aba Resultado é referência didática; a automação completa continua
+indisponível no catálogo.
 
 ## 📐 Padrões de Contribuição
 

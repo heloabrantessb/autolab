@@ -2,7 +2,7 @@
 
 **Versão:** 2.0 — especificação de implementação para agentes de IA  
 **Data:** 15/10/2026
-**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, fluxo web de Arquivos com limpeza e exercício de organização integrados em `dev` (até PR #12, `3585612`). Codespaces preparado no PR #13, em rascunho: testes locais e CI aprovados, validação hospedada pausada por decisão de evitar cobranças; nenhum Codespace criado. Página didática de Planilhas integrada pelo PR #14 (`f0eb5eb`); recebimento inicial CSV/XLSX implementado na `feat/upload-planilhas`, aguardando envio e CI remoto. Agendamento externo da limpeza necessário antes da oficina. Este documento é a fonte de verdade para implementação.
+**Status:** implementação incremental em andamento: base Django, layout, CI, catálogo, fluxo web de Arquivos com limpeza e exercício de organização integrados em `dev` (até PR #12, `3585612`). Codespaces preparado no PR #13, em rascunho: testes locais e CI aprovados, validação hospedada pausada por decisão de evitar cobranças; nenhum Codespace criado. Página didática de Planilhas integrada pelo PR #14 (`f0eb5eb`); recebimento inicial integrado pelo PR #15 (`fc3fa17`). Leitura CSV/XLSX e prévia implementadas na `feat/leitura-csv-xlsx`, aguardando envio e CI remoto. Agendamento externo da limpeza necessário antes da oficina. Este documento é a fonte de verdade para implementação.
 
 ## 1. Objetivo
 
@@ -212,7 +212,7 @@ Esta é uma sugestão inicial, ajustável antes de criar os apps Django.
 
 ## 14. Próxima ação
 
-Enviar `feat/upload-planilhas`, abrir PR para `dev`, confirmar CI e revisar. A branch parte de `dev` em `f0eb5eb`, após integração do PR #14 com dois checks aprovados, sem depender do PR #13. Escopo: formulário, extensão CSV/XLSX, arquivo único, vazio e tamanho declarado/real; sem interpretação ou persistência de resultado. Depois da integração, seguir com `feat/leitura-csv-xlsx`, `feat/limpeza-dados`, `feat/exportacao-planilhas` e `feat/exercicio-planilhas`, uma entrega por vez. Depois seguem IA controlada e preparação para publicação.
+Enviar `feat/leitura-csv-xlsx`, abrir PR para `dev`, confirmar CI e revisar. A branch parte de `dev` em `fc3fa17`, após integração do PR #15 com dois checks aprovados. Escopo: leitura limitada CSV/XLSX e prévia escapada de até dez linhas, sem limpeza, exportação ou persistência. Perfil e decisões técnicas em `docs/LEITURA_PLANILHAS.md`. Depois seguem `feat/limpeza-dados`, `feat/exportacao-planilhas` e `feat/exercicio-planilhas`, uma entrega por vez, depois IA controlada e preparação para publicação.
 
 O PR #13 (`feat/codespaces-arquivos`) permanece em rascunho, sem merge: ambiente testado em contêiner local e CI aprovado, mas sem execução hospedada. Em 15/10/2026, o responsável determinou que não quer cobranças na conta. Não criar Codespaces nem contratar serviços com possibilidade de cobrança; retomar essa validação somente com nova orientação explícita. O percurso ativo usa o pacote de exercício e Python local. Essa restrição operacional não altera Django, Templates ou Bootstrap.
 
@@ -424,6 +424,8 @@ Entrada: um `.csv` UTF-8 ou `.xlsx`, com dados fictícios; limite proposto de 20
 
 Contrato conceitual: `processar_planilha(entrada: Path, opcoes: OpcoesPlanilha, saida: Path) -> ResultadoPlanilha`, retornando contagens e caminho de saída. Usar serviço independente da view. Exercício Codespaces: ler CSV, limpar dados, exportar e validar contagem com `pytest`.
 
+**Estado da leitura:** perfil inicial implementado com CSV UTF-8 separado por vírgulas e XLSX de uma aba simples, sem macros, vínculos externos ou células mescladas. Ver `docs/LEITURA_PLANILHAS.md` para cabeçalho, limites adicionais e conversão de valores. Serviço de leitura preserva dados; pandas será usado na limpeza em entrega própria.
+
 ## 22. Laboratório de IA — primeira versão e fallback
 
 **Objetivo didático:** demonstrar a diferença entre automação determinística e análise com LLM. Caso: classificar solicitações administrativas fictícias em categorias predefinidas (`TI`, `Financeiro`, `Acadêmico`, `Outros`) e prioridade (`baixa`, `media`, `alta`). Entrada: texto curto ou CSV de solicitações fictícias, com limite de tamanho e quantidade de registros; saída: tabela com categoria, prioridade e justificativa curta, além de CSV para download.
@@ -586,7 +588,8 @@ Para cada passo, entregar: arquivos alterados, justificativa curta, comandos exe
 | 15/10/2026 | Pausado | PR #13 de Codespaces em rascunho; contêiner local e CI aprovados, sem validação hospedada nem Codespace criado |
 | 15/10/2026 | Restrição confirmada | Responsável não quer cobranças; não criar Codespaces ou contratar serviços pagos. Percurso ativo com Python local e pacote baixável |
 | 15/10/2026 | Integrado | Página didática de Planilhas e CSV fictício integrados pelo PR #14 com dois checks aprovados; `dev` em `f0eb5eb` |
-| 15/10/2026 | Implementado na feature | Formulário CSV/XLSX com recebimento inicial, extensão, limite de tamanho e arquivo único; leitura e processamento pendentes |
+| 15/10/2026 | Integrado | Recebimento inicial CSV/XLSX integrado pelo PR #15 com dois checks aprovados; `dev` em `fc3fa17` |
+| 15/10/2026 | Implementado na feature | Leitura limitada CSV/XLSX e prévia de até dez linhas, preservando dados e escapando HTML; limpeza e exportação pendentes |
 | 14/10/2026 | Decisao tecnica | Primeiro perfil aceita Stored/Deflate; recusa ZIP64, criptografia, multiplos volumes, outros metodos e metadados de sistema; restricoes explicitas na UI e materiais |
 | 14/10/2026 | Rotas existentes | Catalogo permanece em `core:catalogo` no caminho `/laboratorios/`; a sugestao `laboratorios:catalogo` da secao 19 nao foi adotada |
 
@@ -605,6 +608,8 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - Sem processamento de uploads, downloads, exercicios executaveis ou devcontainer nesta entrega. Sem push, merge ou publicacao.
 
 ### Changelog
+
+- **15/10/2026 — leitura de Planilhas:** serviço independente de Django lê CSV e XLSX com limites de bytes/dimensões e pré-inspeção ZIP/XML. Prévia web escapada preserva a entrada, sem limpeza ou resultados persistidos. Contrato e perfil inicial documentados; recebimento integrado pelo PR #15.
 
 - **15/10/2026 — upload de Planilhas:** formulário e POST com conferência inicial de extensão, arquivo único, vazio e bytes declarados/reais. Feedback acessível na aba Executar, sem interpretar conteúdo ou persistir resultados. Página integrada pelo PR #14; leitura e limpeza continuam em entregas próprias.
 
@@ -646,7 +651,8 @@ Registro histórico da implementação, anterior ao envio e aos merges dos PRs #
 - [x] Fluxo web do Laboratório de Arquivos implementado, testado e integrado em `dev`.
 - [x] Exercício de organização com material e critérios locais integrado pelo PR #12.
 - [x] Página didática de Planilhas e CSV fictício integrados pelo PR #14.
-- [x] Recebimento inicial CSV/XLSX implementado e testado na feature (envio e integração pendentes).
+- [x] Recebimento inicial CSV/XLSX integrado pelo PR #15.
+- [x] Leitura CSV/XLSX e prévia implementadas e testadas na feature (envio e integração pendentes).
 - [ ] Laboratório de Planilhas implementado e testado.
 - [ ] Codespaces validado hospedado e integrado (PR #13 em rascunho, pausado por restrição de custos; contêiner local e CI já validados).
 - [ ] Laboratório de IA implementado e testado.
@@ -814,3 +820,14 @@ Registro histórico da implementação: o envio e a integração aqui descritos 
 - Testes Django e pytest: 138 passaram em cada suíte. Navegador confirmou CSV fictício recebido e extensão inválida rejeitada; aba ativa e mensagens conferidas. Viewport 390 × 844 sem transbordamento horizontal; capturas locais `/tmp/autolab-upload-planilhas-desktop.png` e `/tmp/autolab-upload-planilhas-mobile.png` fora do Git.
 - `manage.py check` sem problemas; `makemigrations --check --dry-run` sem alterações; `git diff --check` aprovado. Servidor de teste isolado encerrado.
 - Catálogo mantém automação em breve; leitura CSV/XLSX, verificação estrutural, limpeza, prévia real e exportação ainda não estão disponíveis. Próxima entrega: `feat/leitura-csv-xlsx` após integração. CI remoto aguarda push manual.
+
+
+### Evidências da leitura CSV/XLSX
+
+- Branch `feat/leitura-csv-xlsx`, base `dev` em `fc3fa17`, destino do PR `dev`; depende do PR #15, independente do Codespaces pausado.
+- Serviço puro de leitura devolve tabela imutável e rebobina stream; CSV UTF-8 com vírgulas e XLSX de uma única aba. Limites de linhas/colunas configuráveis; perfil detalhado em `docs/LEITURA_PLANILHAS.md`.
+- XLSX com openpyxl 3.1.5/defusedxml 0.7.1: inspeção de ZIP real/CRC e XML antes do carregamento, posição real de células/linhas, bloqueio de entidades, macros, vínculos externos e componentes binários. Leitura somente leitura, sem confiar em dimensões declaradas ou calcular fórmulas. Demais dependências preservadas.
+- Prévia em Executar mostra até dez linhas escapadas; células em até 200 caracteres e cabeçalhos em 80, sem alterar os dados no serviço. Dados completos não são embutidos em formulário. Tabela de referência didática permanece separada; catálogo mantém processamento em breve.
+- Vinte e oito testes novos: 21 de serviço e sete de integração web, além de um teste de abreviação (29 novos no total). Suítes Django e pytest: 167 testes passaram em cada uma; checks Django, migrações e dependências sem problemas.
+- Navegador: CSV e XLSX derivados do mesmo material fictício mostraram oito linhas e cinco colunas. Desktop e 390 × 844 conferidos; tabela com rolagem interna e sem transbordamento da página. Capturas locais `/tmp/autolab-leitura-csv-desktop.png` e `/tmp/autolab-leitura-xlsx-mobile.png`, fora do Git. Servidor isolado encerrado.
+- Sem pandas nesta leitura inicial; limpeza com pandas permanece na próxima entrega. Exportação, exercício e resultados persistidos de Planilhas ainda pendentes. CI remoto aguarda push manual.
