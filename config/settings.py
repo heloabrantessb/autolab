@@ -125,6 +125,8 @@ MAX_ZIP_UNCOMPRESSED_BYTES = config("MAX_ZIP_UNCOMPRESSED_BYTES", default=50 * 1
 MAX_ZIP_ENTRY_BYTES = config("MAX_ZIP_ENTRY_BYTES", default=10 * 1024 * 1024, cast=int)  # 10 MiB
 
 # Spreadsheet limits
+MAX_SPREADSHEET_ROWS = config("MAX_SPREADSHEET_ROWS", default=10000, cast=int)
+MAX_SPREADSHEET_COLUMNS = config("MAX_SPREADSHEET_COLUMNS", default=30, cast=int)
 MAX_SPREADSHEET_UPLOAD_BYTES = config("MAX_SPREADSHEET_UPLOAD_BYTES", default=20 * 1024 * 1024, cast=int)  # 20 MiB
 
 # AI Integration settings
